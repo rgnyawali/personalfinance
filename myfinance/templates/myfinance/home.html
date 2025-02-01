@@ -51,17 +51,10 @@
     <div class="container d-grid gap-2 mx-auto">
       <hr class="border border-success border-1 opacity-50">
       <a href="{% url 'myfinance:transaction' %}" class="btn btn-success btn-lg" role="button"><i class="bi-coin pe-3"></i> Transaction</a>
-      <hr class="border border-success border-1 opacity-50">
-      <div class="btn-group">
-        <a href="{% url 'myfinance:vendor' %}" class="btn btn-success btn-lg" role="button"><i class="bi-bank pe-3"></i> Manage Accounts</a>
-        <button type="button" class="btn btn-lg btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"><span class="visually-hidden">Toggle Dropdown</span></button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">List Account</a></li>
-          <li><a class="dropdown-item" href="#">Delete Account</a></li>
-        </ul>
-      </div>
       <a href="{% url 'myfinance:summary' %}" class="btn btn-success btn-lg" role="button"><i class="bi-pie-chart-fill pe-3"></i> Summary</a>
       <hr class="border border-success border-1 opacity-50">
+      <a href="{% url 'myfinance:vendor' %}" class="btn btn-success btn-lg" role="button"><i class="bi-bank pe-3"></i> Manage Accounts</a>
+      <hr class="border border-success border-1 opacity-50">            
       <a href="#" class="btn btn-success btn-lg" role="button"><i class="bi-tags pe-3"></i> Category</a>
       <a href="#" class="btn btn-success btn-lg" role="button"><i class="bi-gear pe-3"></i> Settings</a>
 

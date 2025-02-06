@@ -46,6 +46,8 @@ class Transaction(models.Model):
 	BUSINESS='bu'
 	OTHERINCOME='oi'
 
+	TRANSFER='tf'
+
 
 	categories = [("Expenses",
 					(
@@ -77,7 +79,13 @@ class Transaction(models.Model):
 					(BUSINESS,'Business Income'),
 					(OTHERINCOME,'Other Income'),
 					),
-				)]
+				),
+				("Internal",
+	 				(
+						 (TRANSFER,'A/C Transfer'),
+						 ),
+						 
+						 )]
 
 	MULTIPLE_YEAR='my'
 	MULTIPLE_MONTH='mm'

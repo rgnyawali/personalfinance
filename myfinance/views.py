@@ -22,7 +22,7 @@ def summary(request):
 
 	tr=Transaction.objects.all().order_by('date')
 	incomes = Transaction.objects.filter(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi'))
-	expenses = Transaction.objects.filter(~Q(category='sa')|~Q(category='go')|~Q(category='bu')|~Q(category='oi')).order_by('date')
+	expenses = Transaction.objects.filter(~(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi')|Q(category='tf'))).order_by('date')
 
 
 

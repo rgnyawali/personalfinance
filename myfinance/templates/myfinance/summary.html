@@ -6,16 +6,12 @@
 
 {% for income in incomes %}
     <div class="row">
-        <div class="col-4 border border-primary-subtle text-left">{{income.date}}</div>
-        <div class="col-4 border border-primary-subtle text-end">{{income.tfrom.name}}</div>
-        <div class="col-4 border border-primary-subtle text-end">$ {{income.amount|floatformat:2}}</div>
+        <div class="col-4 border border-primary-subtle text-left">{{income.date}}::{{income.tfrom.name}}::$ {{income.amount|floatformat:2}}</div>
     </div>
 {% endfor %}
 <hr>
 {% for expense in expenses %}
     <div class="row">
-        <div class="col-4 border border-primary-subtle text-left">{{expense.date}}</div>
-        <div class="col-4 border border-primary-subtle text-end">{{expense.tto.name}}</div>
-        <div class="col-4 border border-primary-subtle text-end">$ {{expense.amount|floatformat:2}}</div>
+        <div class="col-4 border border-primary-subtle text-left">{{expense.date}}::{{expense.tto.name}}::$ {{expense.amount|floatformat:2}}</div>
     </div>
 {% endfor %}

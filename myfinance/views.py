@@ -20,9 +20,10 @@ def summary(request):
 
 
 
-	tr=Transaction.objects.all().order_by('date')
+	allTransactions=Transaction.objects.all().order_by('-date')#[:20]
 	incomes = Transaction.objects.filter(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi'))
 	expenses = Transaction.objects.filter(~(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi')|Q(category='tf'))).order_by('date')
+	transfers=Transaction.objects.filter(Q(category='tf'))
 
 
 
@@ -30,7 +31,7 @@ def summary(request):
 
 
 
-	return render(request,'myfinance/summary.html',{'expenses':expenses,'incomes':incomes, 'dates':dates})
+	return render(request,'myfinance/summary.html',{'allTransactions':allTransactions, 'expenses':expenses,'incomes':incomes, 'transfers':transfers, 'dates':dates})
 
 
 class TransactionView(View):

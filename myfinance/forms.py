@@ -9,7 +9,7 @@ class AccountForm(forms.ModelForm):
 		model=Account 
 		exclude=["balance"]
 		labels={'account_type':'Type'}
-		widgets={'details':forms.Textarea(attrs={'rows':5,'cols':24})}
+		widgets={'details':forms.Textarea(attrs={'rows':5,'cols':24}), 'track':forms.CheckboxInput(attrs={"class":"form-check form-switch form-check-input","type":"checkbox","role":"switch"})}
 
 class TransactionForm(forms.ModelForm):
 	class Meta:
@@ -24,6 +24,7 @@ class TransactionForm(forms.ModelForm):
 				'start_date':'Start Date',
 				'number_month':'Number of Months',
 				'number_year': 'Number of Years',
+				'comment': 'Comments',
 				#'month_start':'Month Start',
 				#'month_end':'Month End',
 				#'year_start':'Year Start',

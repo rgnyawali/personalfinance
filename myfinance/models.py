@@ -16,6 +16,7 @@ class Account(models.Model):
 	balance=models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 	account_type=models.CharField(max_length=1,choices=account_types,default=VENDOR)
 	details=models.TextField(max_length=100, null=True, blank=True)
+	track=models.BooleanField(default=False)
 
 	def __str__(self):
 		return (self.name)
@@ -80,9 +81,9 @@ class Transaction(models.Model):
 					(OTHERINCOME,'Other Income'),
 					),
 				),
-				("Internal",
+				("Internal Transfer",
 	 				(
-						 (TRANSFER,'A/C Transfer'),
+						 (TRANSFER,'Transfer'),
 						 ),
 						 
 						 )]
@@ -106,6 +107,7 @@ class Transaction(models.Model):
 	start_date=models.DateField(default=dt.datetime.today)
 	number_month=models.PositiveIntegerField(default=1)
 	number_year=models.PositiveIntegerField(default=1)
+	comment=models.TextField(blank=True,null=True)
 
 
 	def __str__(self):

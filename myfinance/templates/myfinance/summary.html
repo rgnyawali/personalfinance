@@ -3,30 +3,64 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>DASHBOARD</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body style="background-color: #1a1a25;">
     <div class="container border border-danger-subtle text-white">
         <h1 class="display-6 text-center my-3">DASHBOARD</h1>
         <div class="container my-3 rounded-4 p-3" style="background-color: #27293d; border-color:#27293d;">
-            <p class="text-info">Monthly Summary (income expense graph for last 12 months)</p>
-            <img src="https://placehold.co/600x400">
+            <p class="text-info h5">Monthly Summary (income expense graph for last 12 months)</p>
+            <canvas id="myChart"></canvas>
+            <script>
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: {{ months|safe }},  // X-axis labels (Months)
+                        datasets: [
+                            {
+                                label: 'Income',
+                                data: {{ incomes|safe }},  // Income values
+                                borderColor: 'green',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Expense',
+                                data: {{ expenses|safe }},  // Expense values
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            </script>
         </div>
         <div class="container my-3 text-center">
             <div class="row gx-2">
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
-                    <p class="text-info">Expenses (This Month) (Pie Chart for expenses)</p>
+                    <p class="text-info h5">Expenses (This Month) (Pie Chart for expenses)</p>
                     <img src="https://placehold.co/300x400">
                 </div>
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
-                    <p class="text-info">Income (This Month) (Pie Chart for income)</p>
+                    <p class="text-info h5">Income (This Month) (Pie Chart for income)</p>
                     <img src="https://placehold.co/300x400">
                 </div>
             </div>
         </div>
         <div class="container my-3 rounded-4 p-3" style="background-color: #27293d; border-color:#27293d;">
-            <p class="text-info">Recent Transactions</p>
+            <p class="text-info h5">Recent Transactions</p>
             <table class="table table-striped-columns table-dark">
                 <thead>
                     <tr>
@@ -44,10 +78,10 @@
                       <td class="text-info"><strong>$ {{alltransaction.amount|floatformat:2}}</strong></td>
                       {% elif alltransaction.category == 'sa' or alltransaction.category == 'go' or alltransaction.category == 'bu' or alltransaction.category == 'oi' %}
                       <td>{{alltransaction.tfrom.name}}</td>
-                      <td class="text-success"><strong>$ {{alltransaction.amount|floatformat:2}}</strong></td>
+                      <td style="color: #2CFF05"><strong>$ {{alltransaction.amount|floatformat:2}}</strong></td>
                       {% else %}
                       <td>{{alltransaction.tto.name}}</td>
-                      <td class="text-danger"><strong>$ {{alltransaction.amount|floatformat:2}}</strong></td>
+                      <td style="color: #FF0000"><strong>$ {{alltransaction.amount|floatformat:2}}</strong></td>
                       {% endif %}
                     </tr>
                     {% endfor %}

@@ -11,7 +11,7 @@ import datetime as dt
 from django.db.models.functions import ExtractMonth
 import pandas as pd
 import numpy as np
-np.set_printoptions(legacy='1.25')
+#np.set_printoptions(legacy='1.25')
 
 
 
@@ -49,7 +49,7 @@ def summary(request):
 	#for each in last12:
 		#print (f'{each.date}=={each.amount}')
 	
-	df=pd.DataFrame.from_records(Transaction.objects.all().values_list('date','category','amount'),columns=['date','category','amount'])
+	df=pd.DataFrame.from_records(Transaction.objects.filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
 	df=df.astype({'date':'datetime64[ns]'})
 
 	df_income=df[df.category.isin(['sa','go','bu','oi'])][['date','amount']]

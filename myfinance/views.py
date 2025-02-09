@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from .forms import AccountForm, TransactionForm
-#from django.utils import timezone
+from django.utils import timezone
 from .models import Account, Transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dateutil.relativedelta import relativedelta
@@ -70,12 +70,45 @@ def summary(request):
 	#incomes=[1200,1250]
 	#expenses=[1100,2345]
 
+	#Creating Monthly Expenses Pie Chart
+	current_month=timezone.now().month
+
+	df3=df[(df.date.dt.month==current_month)&(~df.category.isin(['sa','go','bu','oi','tf']))][['amount','category']]
+	df4=df3.groupby(pd.Grouper(key='category')).sum()
+	expense_label=df4.index.to_list()
+	expense_data=df4['amount'].astype(float).to_list()
+
+	expense_label_dict=dict(Transaction.categories[0][1])
+	expense_label=[expense_label_dict[each] for each in expense_label]
+
+	# Creating Monthly Income Pie Chart
+	df5=df[(df.date.dt.month==current_month)&(df.category.isin(['sa','go','bu','oi']))][['amount','category']]
+	df6=df5.groupby(pd.Grouper(key='category')).sum()
+	income_label=df6.index.to_list()
+	income_data=df6['amount'].astype(float).to_list()
+
+	income_label_dict=dict(Transaction.categories[1][1])
+	income_label=[income_label_dict[each] for each in income_label]
+
+	#print(expense_label, expense_data)
+	monthexpenses = {
+        'labels': expense_label,
+        'data': expense_data, 
+    }
+
+	monthincome = {
+		'labels': income_label,
+		'data': income_data,
+	}
+	print(monthexpenses)
+
 	
 
 
 
 	return render(request,'myfinance/summary.html',{'allTransactions':allTransactions, 'expenses':expenses,'incomes':incomes, 'transfers':transfers, 'dates':dates,
-	'months':months,'incomes':incomes,'expenses':expenses})
+	'months':months,'incomes':incomes,'expenses':expenses,'monthexpenses':monthexpenses,
+	'monthincome':monthincome})
 
 
 class TransactionView(View):

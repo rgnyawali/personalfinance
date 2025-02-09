@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body style="background-color: #1a1a25;">
-    <div class="container border border-danger-subtle text-white">
+    <div class="container text-white">
         <h1 class="display-6 text-center my-3">DASHBOARD</h1>
         <div class="container my-3 rounded-4 p-3" style="background-color: #27293d; border-color:#27293d;">
             <p class="text-info h5">Monthly Summary (income expense graph for last 12 months)</p>
@@ -26,7 +26,8 @@
                                 borderColor: 'green',
                                 borderWidth: 2,
                                 fill: false,
-                                tension: 0.1
+                                lineTension: 0.5,
+                                //tension: 0.1
                             },
                             {
                                 label: 'Expense',
@@ -34,7 +35,8 @@
                                 borderColor: 'red',
                                 borderWidth: 2,
                                 fill: false,
-                                tension: 0.1
+                                lineTension: 0.5,
+                                //tension: 0.1
                             }
                         ]
                     },
@@ -51,17 +53,20 @@
             <div class="row gx-2">
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
                     <p class="text-info h5">Expenses (This Month) (Pie Chart for expenses)</p>
-                    <img src="https://placehold.co/300x400">
+                    <div><canvas id="expenseChart"></canvas></div>
                 </div>
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
                     <p class="text-info h5">Income (This Month) (Pie Chart for income)</p>
-                    <img src="https://placehold.co/300x400">
+                    <div><canvas id="incomeChart"></canvas></div>
                 </div>
             </div>
         </div>
+        <div class="container my-3 text-center"><p class="text-info h5">Balances Goes Here</p>
+        </div>
+
         <div class="container my-3 rounded-4 p-3" style="background-color: #27293d; border-color:#27293d;">
             <p class="text-info h5">Recent Transactions</p>
-            <table class="table table-striped-columns table-dark">
+            <table class="table table-striped table-dark">
                 <thead>
                     <tr>
                       <th class="text-white-50" scope="col">Date</th>
@@ -93,5 +98,90 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        var ctx = document.getElementById('expenseChart').getContext('2d');
+        var data = {
+            labels: {{ monthexpenses.labels|safe }},
+            datasets: [{
+                data: {{ monthexpenses.data|safe }},
+                backgroundColor: ['#00876c','#ffa600','#ff7c43','#63b179','#665191',
+                '#a05195','#d45087','#88c580','#aed987','#d6ec91','#ffff9d',
+                '#fee17e','#fcc267','#f7a258','#ef8250','#e4604e','#d43d51','#003f5c','#2f4b7c','#665191',
+                '#a05195','#d45087','#f95d6a','#ff7c43','#ffa600','#3d9c73'],
+                //hoverBackgroundColor: ['#FF4C5B', '#2A9DF4', '#F1B732', '#A1C233',],
+                borderColor: '#27293d',
+            }]
+        };
+
+        var options = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            var total = tooltipItem.dataset.data.reduce(function(sum, value) {
+                                return sum + value;
+                            }, 0);
+                            var percentage = Math.round((tooltipItem.raw / total) * 100);
+                            return tooltipItem.label + ' ($ ' + tooltipItem.raw +') : ' + percentage + '%';
+                        }
+                    }
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        };
+
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: options
+        });
+    </script>
+
+    <script>
+        var ctx = document.getElementById('incomeChart').getContext('2d');
+        var data = {
+            labels: {{ monthincome.labels|safe }},
+            datasets: [{
+                data: {{ monthincome.data|safe }},
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56','#3D7317'],
+                hoverBackgroundColor: ['#FF4C5B', '#2A9DF4', '#F1B732', '#63993D'],
+                borderColor: '#27293d',
+            }]
+        };
+
+        var options = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            var total = tooltipItem.dataset.data.reduce(function(sum, value) {
+                                return sum + value;
+                            }, 0);
+                            var percentage = Math.round((tooltipItem.raw / total) * 100);
+                            return tooltipItem.label + ' ($ ' + tooltipItem.raw +') : ' + percentage + '%';
+                        }
+                    }
+                },
+                datalabels:{
+                    color:'white',
+                    font:{
+                        size:14,
+                        weight:'bold'
+                    },
+                    
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        };
+
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: options
+        });
+    </script>
+
   </body>
 </html>

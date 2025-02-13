@@ -11,5 +11,7 @@ urlpatterns = [
     path('summary/',views.summary, name='summary'),
     #path('summary/<int:year>',views.yearly_summary,name='yearly_summary'),
     #path('summary/<int:year>/<int:month>',views.monthly_summary,name='monthly_summary'),
-    #path('transaction-detail/<int:pk>', views.transaction)
+    #path('transaction-detail/<int:pk>', views.transaction),
+
+    path('details/<str:detail>', views.details, name='details'),
 ]

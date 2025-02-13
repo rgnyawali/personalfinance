@@ -21,6 +21,11 @@ def homeview(request):
 
 	return render(request, 'myfinance/home.html',{})
 
+def details(request, detail):
+
+	ctx={'detail':detail}
+	return render(request, 'myfinance/details.html',ctx)
+
 def summary(request):
 	dates=Transaction.objects.values('date').distinct()
 

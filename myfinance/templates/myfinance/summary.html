@@ -10,8 +10,8 @@
   <body style="background-color: #1a1a25;">
     <div class="container text-white">
         <h1 class="display-6 text-center my-3">DASHBOARD</h1>
-        <div class="container my-3 rounded-4 p-3" style="background-color: #27293d; border-color:#27293d;">
-            <p class="text-info h5">Monthly Summary (income expense graph for last 12 months)</p>
+        <div class="container my-3 rounded-4 p-3 text-ce" style="background-color: #27293d; border-color:#27293d;">
+            <p class="text-info h5 text-center">Monthly Summary</p>
             <canvas id="myChart"></canvas>
             <script>
                 var ctx = document.getElementById('myChart').getContext('2d');
@@ -42,22 +42,21 @@
                     },
                     options: {
                         responsive: true,
-                        scales: {
-                            y: { beginAtZero: true }
-                        }
                     }
                 });
             </script>
         </div>
         <div class="container my-3 text-center">
-            <div class="row gx-2">
+            <div class="row gap-3">
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
-                    <p class="text-info h5">Expenses (This Month) (Pie Chart for expenses)</p>
+                    <p class="text-info h5">Expenses {{this}}</p>
                     <div><canvas id="expenseChart"></canvas></div>
+                    <div class="my-2 text-end"><a class="btn btn-primary opacity-50" href="{% url 'myfinance:details' 'expenses' %}" role="button">More</a></div>
                 </div>
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
-                    <p class="text-info h5">Income (This Month) (Pie Chart for income)</p>
+                    <p class="text-info h5">Income {{this}}</p>
                     <div><canvas id="incomeChart"></canvas></div>
+                    <div class="my-2 text-end"><a class="btn btn-primary opacity-50" href="{% url 'myfinance:details' 'income' %}" role="button">More</a></div>
                 </div>
             </div>
         </div>

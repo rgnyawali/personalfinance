@@ -13,48 +13,16 @@
         <div class="container my-3 rounded-4 p-3 text-ce" style="background-color: #27293d; border-color:#27293d;">
             <p class="text-info h5 text-center">Monthly Summary</p>
             <canvas id="myChart"></canvas>
-            <script>
-                var ctx = document.getElementById('myChart').getContext('2d');
-                var chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: {{ months|safe }},  // X-axis labels (Months)
-                        datasets: [
-                            {
-                                label: 'Income',
-                                data: {{ incomes|safe }},  // Income values
-                                borderColor: 'green',
-                                borderWidth: 2,
-                                fill: false,
-                                lineTension: 0.5,
-                                //tension: 0.1
-                            },
-                            {
-                                label: 'Expense',
-                                data: {{ expenses|safe }},  // Expense values
-                                borderColor: 'red',
-                                borderWidth: 2,
-                                fill: false,
-                                lineTension: 0.5,
-                                //tension: 0.1
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                    }
-                });
-            </script>
         </div>
         <div class="container my-3 text-center">
             <div class="row gap-3">
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
-                    <p class="text-info h5">Expenses {{this}}</p>
+                    <p class="text-info h5">Expenses ({{cur_month}})</p>
                     <div><canvas id="expenseChart"></canvas></div>
                     <div class="my-2 text-end"><a class="btn btn-primary opacity-50" href="{% url 'myfinance:details' 'expenses' %}" role="button">More</a></div>
                 </div>
                 <div class="col rounded-4 p-2" style="background-color: #27293d; border-color:#27293d;">
-                    <p class="text-info h5">Income {{this}}</p>
+                    <p class="text-info h5">Income ({{cur_month}})</p>
                     <div><canvas id="incomeChart"></canvas></div>
                     <div class="my-2 text-end"><a class="btn btn-primary opacity-50" href="{% url 'myfinance:details' 'income' %}" role="button">More</a></div>
                 </div>
@@ -63,7 +31,7 @@
         <div class="container my-3 text-center rounded-4 p-3" style="background-color: #27293d; border-color:#27293d;">
             <p class="text-info h5">Your Balances</p>
             <div class="container text-center px-4">
-                <div class="row">
+                <div class="row gap-2">
                     <div class="col-md card" style="background-color: #71747a;">
                         <div class="card-body p-2">
                             <h5 class="card-title text-white">$ 1,045.00</h5>
@@ -127,12 +95,45 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ months|safe }},  // X-axis labels (Months)
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: {{ incomes|safe }},  // Income values
+                        borderColor: 'green',
+                        borderWidth: 2,
+                        fill: false,
+                        lineTension: 0.5,
+                        //tension: 0.1
+                    },
+                    {
+                        label: 'Expense',
+                        data: {{ expenses|safe }},  // Expense values
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        fill: false,
+                        lineTension: 0.5,
+                        //tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+            }
+        });
+    </script>
     <script>
         var ctx = document.getElementById('expenseChart').getContext('2d');
         var data = {
-            labels: {{ monthexpenses.labels|safe }},
+            labels: {{ cur_month_expenses.labels|safe }},
             datasets: [{
-                data: {{ monthexpenses.data|safe }},
+                data: {{ cur_month_expenses.data|safe }},
                 backgroundColor: ['#00876c','#ffa600','#ff7c43','#63b179','#665191',
                 '#a05195','#d45087','#88c580','#aed987','#d6ec91','#ffff9d',
                 '#fee17e','#fcc267','#f7a258','#ef8250','#e4604e','#d43d51','#003f5c','#2f4b7c','#665191',
@@ -170,9 +171,9 @@
     <script>
         var ctx = document.getElementById('incomeChart').getContext('2d');
         var data = {
-            labels: {{ monthincome.labels|safe }},
+            labels: {{ cur_month_income.labels|safe }},
             datasets: [{
-                data: {{ monthincome.data|safe }},
+                data: {{ cur_month_income.data|safe }},
                 backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56','#3D7317','#00876c','#ffa600','#ff7c43','#63b179','#665191'],
                 hoverBackgroundColor: ['#FF4C5B', '#2A9DF4', '#F1B732', '#63993D','#00876c','#ffa600','#ff7c43','#63b179','#665191'],
                 borderColor: '#27293d',

@@ -11,6 +11,7 @@ import datetime as dt
 from django.db.models.functions import ExtractMonth
 import pandas as pd
 import numpy as np
+from .script import get_data, get_detail_data
 #np.set_printoptions(legacy='1.25')
 
 
@@ -22,98 +23,21 @@ def homeview(request):
 	return render(request, 'myfinance/home.html',{})
 
 def details(request, detail):
-
-	ctx={'detail':detail}
+	month4_list, expense4_dict, month4_income_list, income4_dict = get_detail_data(2)
+	month12_list, expense12_dict, month12_income_list, income12_dict = get_detail_data(12)
+	ctx={'detail':detail,'month6_list':month4_list,'expense6_dict':expense4_dict,'month12_list':month12_list,'expense12_dict':expense12_dict, 
+		'month4_income_list':month4_income_list,'income4_dict':income4_dict,'month12_income_list':month12_income_list,'income12_dict':income12_dict}
 	return render(request, 'myfinance/details.html',ctx)
 
 def summary(request):
-	dates=Transaction.objects.values('date').distinct()
 
+	cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income = get_data()
 
 
 	allTransactions=Transaction.objects.all().order_by('-date')#[:20]
-	incomes = Transaction.objects.filter(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi'))
-	expenses = Transaction.objects.filter(~(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi')|Q(category='tf'))).order_by('date')
-	transfers=Transaction.objects.filter(Q(category='tf'))
 
-	# Last 12 months income & expense summary for creating a chart.
-	last12income = Transaction.objects.filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi'))
-	last12expense = Transaction.objects.filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(~(Q(category='sa')|Q(category='go')|Q(category='bu')|Q(category='oi')|Q(category='tf')))
-	
-	monthly_income=last12income.values('date__year','date__month').annotate(total_amount=Sum('amount')).order_by('date__year','date__month')
-	monthly_expense=last12expense.values('date__year','date__month').annotate(total_amount=Sum('amount')).order_by('date__year','date__month')
-
-	income_dict={dt.datetime(year=t['date__year'],month=t['date__month'],day=1).strftime('%B %Y'):t['total_amount'] for t in monthly_income}
-	expense_dict={dt.datetime(year=t['date__year'],month=t['date__month'],day=1).strftime('%B %Y'):t['total_amount'] for t in monthly_expense}
-	#monthly_date={dt.datetime(year=t['date__year'],month=t['date__month'],day=1).strftime('%B %Y'):t['total_amount'] for t in tq}
-	#print(income_dict)
-	#print('################')
-	#print(expense_dict)
-	#print(last12.objects.aggregate(Sum('amount')))
-	#print(myquery)
-	#for each in last12:
-		#print (f'{each.date}=={each.amount}')
-	
-	df=pd.DataFrame.from_records(Transaction.objects.filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
-	df=df.astype({'date':'datetime64[ns]'})
-
-	df_income=df[df.category.isin(['sa','go','bu','oi'])][['date','amount']]
-	df_income.rename(columns={'amount':'income'},inplace=True)
-	df_expense=df[~df.category.isin(['sa','go','bu','oi','tf'])][['date','amount']]
-	df_expense.rename(columns={'amount':'expense'},inplace=True)
-	inc=df_income.groupby(pd.Grouper(key='date', axis=0, freq='ME')).sum()
-	exp=df_expense.groupby(pd.Grouper(key='date', axis=0, freq='ME')).sum()
-	df2=pd.concat([inc,exp],axis=1)
-	df2.fillna(0,inplace=True)
-	print(df2.index.month.to_list())
-	months=df2.index.strftime("%B %Y").tolist()
-	incomes=df2['income'].astype(float).to_list()
-	expenses=df2['expense'].astype(float).to_list()
-	#print(months,incomes,expenses)
-	# Just for trial
-	#months=['January','February']
-	#incomes=[1200,1250]
-	#expenses=[1100,2345]
-
-	#Creating Monthly Expenses Pie Chart
-	current_month=timezone.now().month
-
-	df3=df[(df.date.dt.month==current_month)&(~df.category.isin(['sa','go','bu','oi','tf']))][['amount','category']]
-	df4=df3.groupby(pd.Grouper(key='category')).sum()
-	expense_label=df4.index.to_list()
-	expense_data=df4['amount'].astype(float).to_list()
-
-	expense_label_dict=dict(Transaction.categories[0][1])
-	expense_label=[expense_label_dict[each] for each in expense_label]
-
-	# Creating Monthly Income Pie Chart
-	df5=df[(df.date.dt.month==current_month)&(df.category.isin(['sa','go','bu','oi']))][['amount','category']]
-	df6=df5.groupby(pd.Grouper(key='category')).sum()
-	income_label=df6.index.to_list()
-	income_data=df6['amount'].astype(float).to_list()
-
-	income_label_dict=dict(Transaction.categories[1][1])
-	income_label=[income_label_dict[each] for each in income_label]
-
-	#print(expense_label, expense_data)
-	monthexpenses = {
-        'labels': expense_label,
-        'data': expense_data, 
-    }
-
-	monthincome = {
-		'labels': income_label,
-		'data': income_data,
-	}
-	print(monthexpenses)
-
-	
-
-
-
-	return render(request,'myfinance/summary.html',{'allTransactions':allTransactions, 'expenses':expenses,'incomes':incomes, 'transfers':transfers, 'dates':dates,
-	'months':months,'incomes':incomes,'expenses':expenses,'monthexpenses':monthexpenses,
-	'monthincome':monthincome})
+	return render(request,'myfinance/summary.html',{'allTransactions':allTransactions,'cur_month':cur_month,'months':month12,'incomes':income12,'expenses':expense12,
+														'cur_month_expenses':cur_month_expenses,'cur_month_income':cur_month_income})
 
 
 class TransactionView(View):

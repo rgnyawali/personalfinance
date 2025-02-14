@@ -75,7 +75,7 @@ class Transaction(models.Model):
 					),
 				("Income",
 					(
-					(SALARY,'Salary & Wages'),
+					(SALARY,'Salary and Wages'),
 					(GOVERNMENT,'Government Support'),
 					(BUSINESS,'Business Income'),
 					(OTHERINCOME,'Other Income'),

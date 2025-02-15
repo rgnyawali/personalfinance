@@ -37,4 +37,6 @@ class TransactionForm(forms.ModelForm):
 				'breakdown_option':forms.Select(attrs={'onchange':'hideMonth()'})
 				}
 
-
+class DownloadRangeForm(forms.Form):
+	start_date=forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
+	end_date=forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  <title>Account Management</title>
+{% endblock %}
+    <style>
+      label{width:30%; float:left;}
+      input, select{width:70%; float:right;}
+      form p{padding-bottom: 20px;}
+      #id_track{float:left;}
+
+
+
+
+
+      /* Old CSS - Could be Used */
+      .xfooter{width:100%; text-align: center;}
+      label{font-weight: bold;}
+      .helptext{color:gray; font-size: 0.8rem;}
+      .back-red{background-color: red; color: white;}
+
+      @media only screen and (max-width:800px){
+      	.long-text{max-width:60px;}
+      	.font-responsive{max-width:90%;}
+      }
+      @media only screen and (max-width:500px){
+      	.long-text{max-width:35px;}
+      	.font-responsive{font-size:70%;}
+      }
+      @media only screen and (max-width:350px){
+      	.long-text{max-width:28px;}
+      	.font-responsive{font-size:50%;}
+      }
+
+    </style>
+{% block maincontent %}
+  <div class="container mx-auto mt-3">
+    <h1 class="text-center">Personal Finance Manager</h1>
+    <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
+  </div>
+  <nav class="navbar bg-success mb-3">
+      <h2 class="text-white text-center mx-auto"><i class="bi-bank pe-3"></i> Create New Account</h2>
+  </nav>
+ 
+  <div class="container d-grid gap-2 mx-auto">
+    <form method="POST" id="main-form">
+      {% csrf_token %}
+      {{form.as_p}}
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <button class="btn btn-primary btn-lg mx-auto" role="button">CREATE</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

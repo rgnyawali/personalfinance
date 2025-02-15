@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
-from .forms import AccountForm, TransactionForm
+from .forms import AccountForm, TransactionForm, DownloadRangeForm
 from django.utils import timezone
 from .models import Account, Transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,6 +12,8 @@ from django.db.models.functions import ExtractMonth
 import pandas as pd
 import numpy as np
 from .script import get_data, get_detail_data
+import csv
+from django.http import HttpResponse
 #np.set_printoptions(legacy='1.25')
 
 
@@ -23,21 +25,39 @@ def homeview(request):
 	return render(request, 'myfinance/home.html',{})
 
 def details(request, detail):
-	month4_list, expense4_dict, month4_income_list, income4_dict = get_detail_data(2)
-	month12_list, expense12_dict, month12_income_list, income12_dict = get_detail_data(12)
+	month4_list, expense4_dict, month4_income_list, income4_dict, income_table, expense_table = get_detail_data(4)
+	month12_list, expense12_dict, month12_income_list, income12_dict, _ , _ = get_detail_data(12)
 	ctx={'detail':detail,'month6_list':month4_list,'expense6_dict':expense4_dict,'month12_list':month12_list,'expense12_dict':expense12_dict, 
-		'month4_income_list':month4_income_list,'income4_dict':income4_dict,'month12_income_list':month12_income_list,'income12_dict':income12_dict}
+		'month4_income_list':month4_income_list,'income4_dict':income4_dict,'month12_income_list':month12_income_list,'income12_dict':income12_dict,'income_table':income_table,
+		'expense_table':expense_table}
 	return render(request, 'myfinance/details.html',ctx)
 
 def summary(request):
-
 	cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income = get_data()
+	allTransactions=Transaction.objects.all().order_by('-date')[:50]
+	tracked_accounts=Account.objects.filter(track=True)
+	#print(tracked_accounts)
 
+	if request.method=='POST':
+		form=DownloadRangeForm(request.POST)
+		if form.is_valid():
+			start_date=form.cleaned_data['start_date']
+			end_date=form.cleaned_data['end_date']
 
-	allTransactions=Transaction.objects.all().order_by('-date')#[:20]
+			data=Transaction.objects.filter(date__range=[start_date,end_date])
 
-	return render(request,'myfinance/summary.html',{'allTransactions':allTransactions,'cur_month':cur_month,'months':month12,'incomes':income12,'expenses':expense12,
-														'cur_month_expenses':cur_month_expenses,'cur_month_income':cur_month_income})
+			response=HttpResponse(content_type='text/csv')
+			response['Content-Disposition']='attachment; filename="transaction.csv"'
+
+			writer=csv.writer(response)
+			writer.writerow(['Date','From','To','Amount'])
+			for each in data:
+				writer.writerow([each.date, each.tfrom, each.tto, each.amount])
+			
+			return response
+	form=DownloadRangeForm()
+	return render(request,'myfinance/summary.html',{'allTransactions':allTransactions,'tracked_accounts':tracked_accounts,'cur_month':cur_month,'months':month12,'incomes':income12,'expenses':expense12,
+														'cur_month_expenses':cur_month_expenses,'cur_month_income':cur_month_income,'form':form})
 
 
 class TransactionView(View):
@@ -96,15 +116,17 @@ class TransactionView(View):
 
 class AccountView(View):
 	def get(self,request):
-		form=AccountForm()
-		return render(request, 'myfinance/account.html',{'form':form})
+		return render(request, 'myfinance/account.html',{})
+
+
+class CreateAccount(View):
+	def get(self,request):
+		form = AccountForm()
+		return render(request, 'myfinance/createaccount.html',{'form':form})
 
 	def post(self,request):
 		form=AccountForm(request.POST)
 		if form.is_valid():
 			form.save()
 			return redirect(reverse('myfinance:home'))
-		return render(request,'myfinance/account.html',{'form':form})
-
-
-
+		return render(request,'myfinance/createaccount.html',{'form':form})

@@ -63,33 +63,16 @@ def get_data():
         'data': income_data,
     }
 
-    # Last 12 months expense by category (Bar chart)
-
-    # Last 12 months income by category (Bar chart)
-
-    # Last 6 months expense by category (Bar chart for small screen)
-
-    # Last 12 months income by category (Bar chart for small screen)
-
-    # Recent 50 Transactions (chronological table)
-    #print(df)
-
     x_expense=df[df.category.isin(EXPENSE_CATEGORY)]
-    #x_expense_cat=x_expense.groupby([pd.Grouper(key='date', axis=0, freq='ME'),'category'])['amount'].sum().reset_index()
     x_expense['month']=x_expense['date'].dt.to_period('M')
     pivot_df=x_expense.pivot_table(index='month',columns='category',values='amount',aggfunc='sum',fill_value=0)
     pivot_df=pivot_df.reset_index()
-    #print(pivot_df)
     month_list = pivot_df['month'].dt.strftime('%b %Y').tolist()
-    #print(month_list)
 
     expense_dict={}
     for cols in pivot_df.columns:
         if cols != 'month':
             expense_dict[expense_label_dict[cols]]=pivot_df[cols].astype(float).to_list()
-            #print(expense_label_dict[cols])
-            #print(pivot_df[cols].astype(float).to_list())
-    #print(expense_dict)
     cur_month=timezone.now().strftime("%B")
 
     return (cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income)
@@ -113,7 +96,10 @@ def get_detail_data(n):
     for cols in pivot_df.columns:
         if cols != 'month':
             expense_dict[expense_label_dict[cols]]=pivot_df[cols].astype(float).to_list()
-    #print(month_list)
+    
+    edf=pd.DataFrame.from_dict(expense_dict)
+    edf.set_index([month_expense_list],inplace=True)
+    expense_table=edf.iloc[::-1].to_html(justify='center',classes="table table-bordered align-middle text-center font-responsive text-white", float_format=lambda x: f"{x:,.2f}")
 
 
     x_income=df[df.category.isin(INCOME_CATEGORY)]
@@ -131,11 +117,11 @@ def get_detail_data(n):
 
     idf=pd.DataFrame.from_dict(income_dict)
     idf.set_index([month_income_list], inplace=True)
-    print(idf.iloc[::-1])
-    #print(month_income_list)
-    #pivot_df2.rename(mapper=(),axis=1,inplace=True)
+    income_table=idf.iloc[::-1].to_html(justify='center',classes="table table-bordered align-middle text-center font-responsive text-white", float_format=lambda x: f"{x:,.2f}")
 
 
-    return(month_expense_list, expense_dict, month_income_list, income_dict)
+
+
+    return(month_expense_list, expense_dict, month_income_list, income_dict, income_table, expense_table)
 
 

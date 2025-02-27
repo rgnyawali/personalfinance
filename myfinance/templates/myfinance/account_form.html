@@ -1,0 +1,6 @@
+<form method="POST" hx-post="{% url 'myfinance:account-edit' object.pk %}" hx-target="#edit-form-{{object.pk}}" hx-swap="outerHTML">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+    <button type="button" class="btn btn-secondary" onclick="this.closest('form').outerHTML=''">Cancel</button>
+</form>

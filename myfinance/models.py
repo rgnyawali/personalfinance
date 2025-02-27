@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 import datetime as dt
 from django.utils import timezone
+from django.urls import reverse
 
 # Create your models here.
 
@@ -20,6 +21,9 @@ class Account(models.Model):
 
 	def __str__(self):
 		return (self.name)
+	
+	def get_absolute_url(self):
+		return reverse('account-edit',args=[self.pk])
 
 class Transaction(models.Model):
 	HOME_EXPENSES='he' 		# mortgage, insurance

@@ -9,7 +9,7 @@ class AccountForm(forms.ModelForm):
 		model=Account 
 		exclude=["balance"]
 		labels={'account_type':'Type'}
-		widgets={'details':forms.Textarea(attrs={'rows':5,'cols':24}), 'track':forms.CheckboxInput(attrs={"class":"form-check form-switch form-check-input","type":"checkbox","role":"switch"})}
+		widgets={'details':forms.Textarea(attrs={'rows':5,'cols':24}), 'track':forms.CheckboxInput(attrs={"class":"form-check form-check-input","type":"checkbox","role":"switch"})}
 
 class TransactionForm(forms.ModelForm):
 	class Meta:
@@ -40,3 +40,8 @@ class TransactionForm(forms.ModelForm):
 class DownloadRangeForm(forms.Form):
 	start_date=forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
 	end_date=forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
+
+class AccountChangeForm(forms.ModelForm):
+	class Meta:
+		model=Account
+		fields='__all__'

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from .forms import AccountForm, TransactionForm, DownloadRangeForm
+from .forms import AccountForm, TransactionForm, DownloadRangeForm, AccountChangeForm
 from django.utils import timezone
 from .models import Account, Transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,6 +15,7 @@ from .script import get_data, get_detail_data
 import csv
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView, UpdateView
 #np.set_printoptions(legacy='1.25')
 
 
@@ -53,9 +54,9 @@ def summary(request):
 			response['Content-Disposition']='attachment; filename="transaction.csv"'
 
 			writer=csv.writer(response)
-			writer.writerow(['Date','From','To','Amount'])
+			writer.writerow(['Date','From','To','Amount','Comment'])
 			for each in data:
-				writer.writerow([each.date, each.tfrom, each.tto, each.amount])
+				writer.writerow([each.date, each.tfrom, each.tto, each.amount, each.comment])
 			
 			return response
 	form=DownloadRangeForm()
@@ -133,3 +134,27 @@ class CreateAccount(LoginRequiredMixin,View):
 			form.save()
 			return redirect(reverse('myfinance:home'))
 		return render(request,'myfinance/createaccount.html',{'form':form})
+
+class AccountListView(ListView):
+	model=Account
+	template_name='myfinance/account_list.html'
+	context_object_name='accounts'
+
+class AccountUpdateView(UpdateView):
+	model=Account
+	form_class=AccountChangeForm
+	template_name='myfinance/account_form.html'
+	#success_url=reverse_lazy('account_list')
+
+	def form_valid(self, form):
+		self.object=form.save()
+		return HttpResponse(f'<li class="list-group-item d-flex justify-content-between align-items-center">'
+                            f'<span>{{self.object.name}}</span>'
+                            f'<button class="btn btn-sm btn-outline-primary" '
+                            f'hx-get="{{self.object.get_absolute_url()}}" '
+                            f'hx-target="#edit-form-{{self.object.pk}}" '
+                            f'hx-swap="outerHTML">'
+                            f'✏️</button></li>')
+	
+	def form_invalid(self, form):
+		return render(self.request, self.template_name, {'form':form, 'object':self.object})

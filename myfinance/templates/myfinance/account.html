@@ -8,11 +8,11 @@
     <h1 class="text-center">Personal Finance Manager</h1>
     <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
   </div>
-  <nav class="navbar bg-success mb-3">
+  <nav class="navbar bg-success bg-opacity-75 mb-3">
       <h2 class="text-white text-center mx-auto"><i class="bi-bank pe-3"></i> Manage Account</h2>
   </nav>
   <div class="container d-grid gap-2 mx-auto">
     <a href="{% url 'myfinance:createaccount' %}" class="btn btn-primary btn-lg" role="button"><i class="bi bi-plus-square"></i> Create New Account</a>
-    <a href="#" class="btn btn-primary btn-lg" role="button"><i class="bi bi-pencil-square"></i> Edit Account</a>
+    <a href="{% url 'myfinance:account-list' %}" class="btn btn-primary btn-lg" role="button"><i class="bi bi-pencil-square"></i> Edit Account</a>
   </div>
 {% endblock %}

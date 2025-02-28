@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item List</title>
+    <script src="https://unpkg.com/htmx.org@1.9.4"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Item List</h2>
+        <ul class="list-group">
+            {% for account in accounts %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ account.name }}
+                    <button class="btn btn-sm btn-outline-primary"
+                        hx-get="{% url 'myfinance:account-edit' account.pk %}"
+                        hx-target="#edit-form-{{account.pk}}"
+                        hx-swap="outerHTML">
+                        ✏️
+                    </button>
+                </li>
+                <div id="edit-form-{{account.pk}}"></div>
+            {% endfor %}
+        </ul>
+        
+        <div id="edit-form-container" class="mt-4"></div>
+    </div>
+</body>
+</html>

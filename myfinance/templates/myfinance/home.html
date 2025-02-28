@@ -6,6 +6,13 @@
   <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
 </div>
 <div class="container d-grid gap-2 mx-auto">
+  {% if user.is_authenticated %}
+  <div class="text-end"><button type="button" class="btn btn-success"><i class="bi bi-person-circle"></i></button></div>
+  <p>Hi {{ user.email }}! </p>
+  <form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Log Out</button>
+  </form>
   <hr class="border border-success border-1 opacity-50">
   <a href="{% url 'myfinance:transaction' %}" class="btn btn-success btn-lg" role="button"><i class="bi-coin pe-3"></i> Transaction</a>
   <a href="{% url 'myfinance:summary' %}" class="btn btn-success btn-lg" role="button"><i class="bi-pie-chart-fill pe-3"></i> Summary</a>
@@ -14,7 +21,10 @@
   <hr class="border border-success border-1 opacity-50">            
   <a href="#" class="btn btn-success btn-lg" role="button"><i class="bi-tags pe-3"></i> Category</a>
   <a href="#" class="btn btn-success btn-lg" role="button"><i class="bi-gear pe-3"></i> Settings</a>
-
+  {% else %}
+  <hr class="border border-success border-1 opacity-50">
+  <a href="{% url 'login' %}" class="btn btn-success btn-lg" role="button"><i class="bi-person-video pe-3"></i> Login</a>
+  <div class="lead text-end">Don't have an account. Create one <a href="{% url 'users:signup' %}" class="link-primary">here</a>.</div>
+  {% endif %}
 </div>
-
 {% endblock %}

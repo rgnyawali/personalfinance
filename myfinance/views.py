@@ -14,6 +14,7 @@ import numpy as np
 from .script import get_data, get_detail_data
 import csv
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 #np.set_printoptions(legacy='1.25')
 
 
@@ -24,6 +25,7 @@ def homeview(request):
 
 	return render(request, 'myfinance/home.html',{})
 
+@login_required
 def details(request, detail):
 	month4_list, expense4_dict, month4_income_list, income4_dict, income_table, expense_table = get_detail_data(4)
 	month12_list, expense12_dict, month12_income_list, income12_dict, _ , _ = get_detail_data(12)
@@ -32,6 +34,7 @@ def details(request, detail):
 		'expense_table':expense_table}
 	return render(request, 'myfinance/details.html',ctx)
 
+@login_required
 def summary(request):
 	cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income = get_data()
 	allTransactions=Transaction.objects.all().order_by('-date')[:50]
@@ -60,7 +63,7 @@ def summary(request):
 														'cur_month_expenses':cur_month_expenses,'cur_month_income':cur_month_income,'form':form})
 
 
-class TransactionView(View):
+class TransactionView(LoginRequiredMixin, View):
 	def get(self, request):
 		form=TransactionForm()
 		return render(request, 'myfinance/transaction.html',{'form':form})
@@ -114,12 +117,12 @@ class TransactionView(View):
 			return redirect(reverse('myfinance:home'))
 		return render(request,'myfinance/transaction.html',{'form':form})
 
-class AccountView(View):
+class AccountView(LoginRequiredMixin,View):
 	def get(self,request):
 		return render(request, 'myfinance/account.html',{})
 
 
-class CreateAccount(View):
+class CreateAccount(LoginRequiredMixin,View):
 	def get(self,request):
 		form = AccountForm()
 		return render(request, 'myfinance/createaccount.html',{'form':form})

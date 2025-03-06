@@ -28,8 +28,9 @@ def homeview(request):
 
 @login_required
 def details(request, detail):
-	month4_list, expense4_dict, month4_income_list, income4_dict, income_table, expense_table = get_detail_data(4)
-	month12_list, expense12_dict, month12_income_list, income12_dict, _ , _ = get_detail_data(12)
+	owner=request.user
+	month4_list, expense4_dict, month4_income_list, income4_dict, income_table, expense_table = get_detail_data(4,owner)
+	month12_list, expense12_dict, month12_income_list, income12_dict, _ , _ = get_detail_data(12,owner)
 	ctx={'detail':detail,'month6_list':month4_list,'expense6_dict':expense4_dict,'month12_list':month12_list,'expense12_dict':expense12_dict, 
 		'month4_income_list':month4_income_list,'income4_dict':income4_dict,'month12_income_list':month12_income_list,'income12_dict':income12_dict,'income_table':income_table,
 		'expense_table':expense_table}
@@ -37,9 +38,10 @@ def details(request, detail):
 
 @login_required
 def summary(request):
-	cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income = get_data()
-	allTransactions=Transaction.objects.all().order_by('-date')[:50]
-	tracked_accounts=Account.objects.filter(track=True)
+	owner=request.user
+	cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income = get_data(owner)
+	allTransactions=Transaction.objects.filter(owner=request.user).order_by('-date')[:50]
+	tracked_accounts=Account.objects.filter(owner=request.user).filter(track=True)
 	#print(tracked_accounts)
 
 	if request.method=='POST':
@@ -48,7 +50,7 @@ def summary(request):
 			start_date=form.cleaned_data['start_date']
 			end_date=form.cleaned_data['end_date']
 
-			data=Transaction.objects.filter(date__range=[start_date,end_date])
+			data=Transaction.objects.filter(owner=request.user).filter(date__range=[start_date,end_date])
 
 			response=HttpResponse(content_type='text/csv')
 			response['Content-Disposition']='attachment; filename="transaction.csv"'
@@ -66,19 +68,23 @@ def summary(request):
 
 class TransactionView(LoginRequiredMixin, View):
 	def get(self, request):
-		form=TransactionForm()
+		form=TransactionForm(owner=self.request.user)
 		return render(request, 'myfinance/transaction.html',{'form':form})
 
 	def post(self, request):
-		form=TransactionForm(request.POST)
+		form=TransactionForm(request.POST,owner=self.request.user)
 		if form.is_valid():
 			data=form.cleaned_data
 			#print(form.cleaned_data)
+			owner=request.user
 			from_account = data.get('tfrom')
 			to_account = data.get('tto')
 
 			from_account.balance = from_account.balance - data.get('amount')
 			to_account.balance = to_account.balance + data.get('amount')
+
+			from_account.owner=owner
+			to_account.owner=owner
 
 			from_account.save()
 			to_account.save()
@@ -103,11 +109,13 @@ class TransactionView(LoginRequiredMixin, View):
 				i=0
 
 			for each in range(i):
-				tr=Transaction(tfrom=data.get('tfrom'), 
+				tr=Transaction(owner=owner,
+					tfrom=data.get('tfrom'), 
 				   tto=data.get('tto'), 
 				   amount=data.get('amount')/i,
 				   date=set_date,
 				   category=data.get('category'),
+				   categorys=data.get('categorys'),
 				   breakdown_option=data.get('breakdown_option'),
 				   number_month=data.get('number_month'),
 				   number_year=data.get('number_year'),
@@ -131,7 +139,9 @@ class CreateAccount(LoginRequiredMixin,View):
 	def post(self,request):
 		form=AccountForm(request.POST)
 		if form.is_valid():
-			form.save()
+			obj=form.save(commit=False)
+			obj.owner=self.request.user
+			obj.save()
 			return redirect(reverse('myfinance:home'))
 		return render(request,'myfinance/createaccount.html',{'form':form})
 

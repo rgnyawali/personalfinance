@@ -6,12 +6,12 @@ import numpy as np
 from django.utils import timezone
 
 
-def get_data():
+def get_data(owner):
     INCOME_CATEGORY=['sa','go','bu','oi']
     EXPENSE_CATEGORY=['he', 'gr','hi','ph','ut','in','fa','fb','lq','cr','me','en','tr','cc','ed','sp','ar','gi','or']
 
     # Last 12 months income & expense summary (Line chart)
-    df=pd.DataFrame.from_records(Transaction.objects.filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
+    df=pd.DataFrame.from_records(Transaction.objects.filter(owner=owner).filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
     df=df.astype({'date':'datetime64[ns]'})
 
     df_income=df[df.category.isin(INCOME_CATEGORY)][['date','amount']]
@@ -77,11 +77,11 @@ def get_data():
 
     return (cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income)
 
-def get_detail_data(n):
+def get_detail_data(n, owner):
     INCOME_CATEGORY=['sa','go','bu','oi']
     EXPENSE_CATEGORY=['he', 'gr','hi','ph','ut','in','fa','fb','lq','cr','me','en','tr','cc','ed','sp','ar','gi','or']
 
-    df=pd.DataFrame.from_records(Transaction.objects.filter(date__gte=dt.date.today()+relativedelta(months=-n)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
+    df=pd.DataFrame.from_records(Transaction.objects.filter(owner=owner).filter(date__gte=dt.date.today()+relativedelta(months=-n)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
     df=df.astype({'date':'datetime64[ns]'})
 
     x_expense=df[df.category.isin(EXPENSE_CATEGORY)]

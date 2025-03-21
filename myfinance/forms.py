@@ -20,17 +20,12 @@ class TransactionForm(forms.ModelForm):
 				'tto':'To',
 				'amount':'Amount ($)',
 				'date':'Transaction Date',
-				#'category':'Category',
-				'categorys':'Category 2',
+				'categorys':'Category',
 				'breakdown_option':'Breakdown',
 				'start_date':'Start Date',
 				'number_month':'Number of Months',
 				'number_year': 'Number of Years',
 				'comment': 'Comments',
-				#'month_start':'Month Start',
-				#'month_end':'Month End',
-				#'year_start':'Year Start',
-				#'year_end':'Year End'
 				}
 		widgets={'date':forms.DateInput(attrs={'type':'date'}),
 				'start_date':forms.DateInput(attrs={'type':'date'}),
@@ -47,15 +42,15 @@ class TransactionForm(forms.ModelForm):
 		if user:
 			self.fields['tfrom'].queryset = Account.objects.filter(owner=user)
 			self.fields['tto'].queryset = Account.objects.filter(owner=user)
-			#self.fields['categorys'].queryset = Category.objects.filter(owner=user)
 			
 			# Here is the display categorization of Categorys
-			categories = Category.objects.filter(owner=user).order_by('cat_type')  # Assuming category field exists
+			categories = Category.objects.filter(owner=user).order_by('cat_type')
 			grouped_choices = {}
 			for category in categories:
-				grouped_choices.setdefault(Category.category, []).append((category.id, category.name))  # (ID, Label)
+				grouped_choices.setdefault([item for item in Category.cat_types if category.cat_type in item][0][1], []).append((category.id, category.name))
+				#grouped_choices.setdefault(category.cat_type, []).append((category.id, category.name))
+			print(grouped_choices)
 			self.fields['categorys'].choices = self._get_grouped_choices(grouped_choices)
-            #self.fields['account2'].choices = self._get_grouped_choices(grouped_choices)
 
 	def _get_grouped_choices(self, grouped_choices):
 		return [(category, choices) for category, choices in grouped_choices.items()]

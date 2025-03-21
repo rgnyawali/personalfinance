@@ -1,4 +1,4 @@
-from .models import Account, Transaction
+from .models import Account, Transaction, Category
 import datetime as dt
 from dateutil.relativedelta import relativedelta
 import pandas as pd
@@ -7,11 +7,16 @@ from django.utils import timezone
 
 
 def get_data(owner):
-    INCOME_CATEGORY=['sa','go','bu','oi']
-    EXPENSE_CATEGORY=['he', 'gr','hi','ph','ut','in','fa','fb','lq','cr','me','en','tr','cc','ed','sp','ar','gi','or']
+    #INCOME_CATEGORY=['sa','go','bu','oi']
+    icats=Category.objects.filter(owner=owner).filter(cat_type='I')
+    INCOME_CATEGORY=[each.pk for each in icats]
+
+    ecats=Category.objects.filter(owner=owner).filter(cat_type='E')
+    EXPENSE_CATEGORY=[each.pk for each in ecats]
+    #EXPENSE_CATEGORY=['he', 'gr','hi','ph','ut','in','fa','fb','lq','cr','me','en','tr','cc','ed','sp','ar','gi','or']
 
     # Last 12 months income & expense summary (Line chart)
-    df=pd.DataFrame.from_records(Transaction.objects.filter(owner=owner).filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
+    df=pd.DataFrame.from_records(Transaction.objects.filter(owner=owner).filter(date__gte=dt.date.today()+relativedelta(months=-12)).filter(date__lte=dt.date.today()).values_list('date','categorys','amount'),columns=['date','category','amount'])
     df=df.astype({'date':'datetime64[ns]'})
 
     df_income=df[df.category.isin(INCOME_CATEGORY)][['date','amount']]
@@ -22,7 +27,6 @@ def get_data(owner):
     exp=df_expense.groupby(pd.Grouper(key='date', axis=0, freq='ME')).sum()
     df2=pd.concat([inc,exp],axis=1)
     df2.fillna(0,inplace=True)
-
     month12=df2.index.strftime("%b %Y").tolist()
     month6=df2[-6:].index.strftime("%b %Y").tolist()
 
@@ -38,10 +42,11 @@ def get_data(owner):
     df3=df[(df.date.dt.month==current_month)&(df.category.isin(EXPENSE_CATEGORY))][['amount','category']]
     df4=df3.groupby(pd.Grouper(key='category')).sum()
     expense_label=df4.index.to_list()
+    print(expense_label)
     expense_data=df4['amount'].astype(float).to_list()
 
-    expense_label_dict=dict(Transaction.categories[0][1])
-    expense_label=[expense_label_dict[each] for each in expense_label]
+    #expense_label_dict=dict(Transaction.categories[0][1])
+    expense_label=EXPENSE_CATEGORY #[expense_label_dict[each] for each in expense_label]
 
     cur_month_expenses = {
         'labels': expense_label,
@@ -55,8 +60,8 @@ def get_data(owner):
     income_label=df6.index.to_list()
     income_data=df6['amount'].astype(float).to_list()
 
-    income_label_dict=dict(Transaction.categories[1][1])
-    income_label=[income_label_dict[each] for each in income_label]
+    #income_label_dict=dict(Transaction.categories[1][1])
+    income_label= INCOME_CATEGORY #[income_label_dict[each] for each in income_label]
     
     cur_month_income = {
         'labels': income_label,
@@ -69,12 +74,12 @@ def get_data(owner):
     pivot_df=pivot_df.reset_index()
     month_list = pivot_df['month'].dt.strftime('%b %Y').tolist()
 
-    expense_dict={}
-    for cols in pivot_df.columns:
-        if cols != 'month':
-            expense_dict[expense_label_dict[cols]]=pivot_df[cols].astype(float).to_list()
+    #expense_dict={}
+    #for cols in pivot_df.columns:
+        #if cols != 'month':
+            #expense_dict[expense_label_dict[cols]]=pivot_df[cols].astype(float).to_list()
     cur_month=timezone.now().strftime("%B")
-
+    print(month12)
     return (cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income)
 
 def get_detail_data(n, owner):

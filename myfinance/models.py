@@ -27,7 +27,7 @@ class Account(models.Model):
 		return reverse('account-edit',args=[self.pk])
 
 class Transaction(models.Model):
-	HOME_EXPENSES='he' 		# mortgage, insurance
+	"""HOME_EXPENSES='he' 		# mortgage, insurance
 	GROCERY='gr'			# food, cleaning, hygiene
 	HOME_IMPROVEMENT='hi'	# furniture, lawn, garden, decoration
 	PHONE='ph'				# phone
@@ -53,7 +53,7 @@ class Transaction(models.Model):
 	OTHERINCOME='oi'
 
 	TRANSFER='tf'
-
+	
 
 	categories = [("Expenses",
 					(
@@ -92,15 +92,13 @@ class Transaction(models.Model):
 						 ),
 						 
 						 )]
-
+	"""
 	MULTIPLE_YEAR='my'
 	MULTIPLE_MONTH='mm'
 	NONE='no'
 
 	breakdown_options=[(NONE,'None'),
 						(MULTIPLE_MONTH,'Multiple Months'),
-						#(SINGLE_CALENDAR_YEAR,'Current Year'),
-						#(NEXT_YEAR,'One Year From Now'),
 						(MULTIPLE_YEAR,'Multiple Years')]
 	
 	owner=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -108,7 +106,6 @@ class Transaction(models.Model):
 	tto=models.ForeignKey('Account',related_name='tto',on_delete=models.CASCADE)
 	amount=models.DecimalField(max_digits=7, decimal_places=2, default=0.00)
 	date=models.DateField()
-	#category=models.CharField(max_length=2,choices=categories, default=GROCERY)
 	categorys=models.ForeignKey('Category', related_name='categories', on_delete=models.CASCADE,null=True)
 	breakdown_option=models.CharField(max_length=2,choices=breakdown_options, default=NONE)
 	start_date=models.DateField(default=dt.datetime.today)

@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from .forms import AccountForm, TransactionForm, DownloadRangeForm, AccountChangeForm
 from django.utils import timezone
-from .models import Account, Transaction
+from .models import Account, Transaction, Category
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q, Count, Sum
@@ -23,7 +23,6 @@ from django.views.generic import ListView, UpdateView
 # Create your views here.
 
 def homeview(request):
-
 	return render(request, 'myfinance/home.html',{})
 
 @login_required
@@ -75,7 +74,6 @@ class TransactionView(LoginRequiredMixin, View):
 		form=TransactionForm(request.POST,owner=self.request.user)
 		if form.is_valid():
 			data=form.cleaned_data
-			#print(form.cleaned_data)
 			owner=request.user
 			from_account = data.get('tfrom')
 			to_account = data.get('tto')
@@ -88,9 +86,6 @@ class TransactionView(LoginRequiredMixin, View):
 
 			from_account.save()
 			to_account.save()
-			#print(from_account.balance - data.get('amount'))
-			#print(to_account.balance + data.get('amount'))
-
 
 			if data.get('breakdown_option')=='no':
 				print('Im at option no')
@@ -114,7 +109,7 @@ class TransactionView(LoginRequiredMixin, View):
 				   tto=data.get('tto'), 
 				   amount=data.get('amount')/i,
 				   date=set_date,
-				   category=data.get('category'),
+				   #categorys=data.get('category'),
 				   categorys=data.get('categorys'),
 				   breakdown_option=data.get('breakdown_option'),
 				   number_month=data.get('number_month'),

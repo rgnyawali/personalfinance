@@ -148,21 +148,41 @@ class AccountListView(ListView):
 	def get_queryset(self):
 		return Account.objects.filter(owner=self.request.user)
 
-class AccountUpdateView(UpdateView):
-	model=Account
-	form_class=AccountChangeForm
-	template_name='myfinance/account_form.html'
-	#success_url=reverse_lazy('account_list')
-
-	def form_valid(self, form):
-		self.object=form.save()
-		return HttpResponse(f'<li class="list-group-item d-flex justify-content-between align-items-center">'
-                            f'<span>{{self.object.name}}</span>'
-                            f'<button class="btn btn-sm btn-outline-primary" '
-                            f'hx-get="{{self.object.get_absolute_url()}}" '
-                            f'hx-target="#edit-form-{{self.object.pk}}" '
-                            f'hx-swap="outerHTML">'
-                            f'✏️</button></li>')
-	
-	def form_invalid(self, form):
-		return render(self.request, self.template_name, {'form':form, 'object':self.object})
+class AccountUpdateView(LoginRequiredMixin, UpdateView):
+    model = Account
+    form_class = AccountChangeForm
+    template_name = 'myfinance/account_edit_form.html'
+    success_url = reverse_lazy('myfinance:account-list')
+    
+    def get_queryset(self):
+        return Account.objects.filter(owner=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['account_types'] = Account.account_types
+        return context
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        if self.request.headers.get('HX-Request'):
+            # Return just the updated account item HTML
+            return render(self.request, 'myfinance/account_list_item.html', {'account': self.object})
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        if self.request.headers.get('HX-Request'):
+            return render(self.request, self.template_name, {
+                'form': form, 
+                'account': self.get_object(),
+                'account_types': Account.account_types
+            })
+        return super().form_invalid(form)
+    
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.headers.get('HX-Request'):
+            return render(request, self.template_name, {
+                'account': self.object,
+                'account_types': Account.account_types
+            })
+        return super().get(request, *args, **kwargs)

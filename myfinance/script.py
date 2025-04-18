@@ -10,9 +10,11 @@ def get_data(owner):
     #INCOME_CATEGORY=['sa','go','bu','oi']
     icats=Category.objects.filter(owner=owner).filter(cat_type='I')
     INCOME_CATEGORY=[each.pk for each in icats]
+    INCOME_LABELS=[each.name for each in icats]
 
     ecats=Category.objects.filter(owner=owner).filter(cat_type='E')
     EXPENSE_CATEGORY=[each.pk for each in ecats]
+    EXPENSE_LABELS=[each.name for each in ecats]
     #EXPENSE_CATEGORY=['he', 'gr','hi','ph','ut','in','fa','fb','lq','cr','me','en','tr','cc','ed','sp','ar','gi','or']
 
     # Last 12 months income & expense summary (Line chart)
@@ -42,14 +44,15 @@ def get_data(owner):
     df3=df[(df.date.dt.month==current_month)&(df.category.isin(EXPENSE_CATEGORY))][['amount','category']]
     df4=df3.groupby(pd.Grouper(key='category')).sum()
     expense_label=df4.index.to_list()
-    print(expense_label)
+    exp_label = list(Category.objects.filter(pk__in=expense_label).values_list('name', flat=True))
+
     expense_data=df4['amount'].astype(float).to_list()
 
     #expense_label_dict=dict(Transaction.categories[0][1])
-    expense_label=EXPENSE_CATEGORY #[expense_label_dict[each] for each in expense_label]
+    #expense_label=EXPENSE_CATEGORY #[expense_label_dict[each] for each in expense_label]
 
     cur_month_expenses = {
-        'labels': expense_label,
+        'labels': exp_label,
         'data': expense_data, 
     }
 
@@ -58,13 +61,14 @@ def get_data(owner):
     df5=df[(df.date.dt.month==current_month)&(df.category.isin(INCOME_CATEGORY))][['amount','category']]
     df6=df5.groupby(pd.Grouper(key='category')).sum()
     income_label=df6.index.to_list()
+    inc_label = list(Category.objects.filter(pk__in=income_label).values_list('name', flat=True))
     income_data=df6['amount'].astype(float).to_list()
 
     #income_label_dict=dict(Transaction.categories[1][1])
-    income_label= INCOME_CATEGORY #[income_label_dict[each] for each in income_label]
-    
+    #income_label= INCOME_LABELS #[income_label_dict[each] for each in income_label]
+    #print([x for x in income_label)
     cur_month_income = {
-        'labels': income_label,
+        'labels': inc_label,
         'data': income_data,
     }
 
@@ -79,12 +83,19 @@ def get_data(owner):
         #if cols != 'month':
             #expense_dict[expense_label_dict[cols]]=pivot_df[cols].astype(float).to_list()
     cur_month=timezone.now().strftime("%B")
-    print(month12)
+    #print(month12)
     return (cur_month, month12, month6, income12, income6, expense12, expense6, expense_data, expense_label, income_data, income_label, cur_month_expenses, cur_month_income)
 
 def get_detail_data(n, owner):
-    INCOME_CATEGORY=['sa','go','bu','oi']
-    EXPENSE_CATEGORY=['he', 'gr','hi','ph','ut','in','fa','fb','lq','cr','me','en','tr','cc','ed','sp','ar','gi','or']
+    #INCOME_CATEGORY=['sa','go','bu','oi']
+    #EXPENSE_CATEGORY=['he', 'gr','hi','ph','ut','in','fa','fb','lq','cr','me','en','tr','cc','ed','sp','ar','gi','or']
+    icats=Category.objects.filter(owner=owner).filter(cat_type='I')
+    INCOME_CATEGORY=[each.pk for each in icats]
+    INCOME_LABELS=[each.name for each in icats]
+
+    ecats=Category.objects.filter(owner=owner).filter(cat_type='E')
+    EXPENSE_CATEGORY=[each.pk for each in ecats]
+    EXPENSE_LABELS=[each.name for each in ecats]
 
     df=pd.DataFrame.from_records(Transaction.objects.filter(owner=owner).filter(date__gte=dt.date.today()+relativedelta(months=-n)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
     df=df.astype({'date':'datetime64[ns]'})

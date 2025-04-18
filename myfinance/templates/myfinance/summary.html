@@ -71,10 +71,10 @@
                     {% for alltransaction in allTransactions %}
                     <tr>
                       <td>{{alltransaction.date}}</td>
-                      {% if alltransaction.category == "tf" %}
+                      {% if alltransaction.categorys.cat_type == "T" %}
                       <td>{{alltransaction.tfrom.name}} to {{alltransaction.tto.name}}</td>
                       <td class="text-info"><strong>$ {{alltransaction.amount|floatformat:2}}</strong></td>
-                      {% elif alltransaction.category == 'sa' or alltransaction.category == 'go' or alltransaction.category == 'bu' or alltransaction.category == 'oi' %}
+                      {% elif alltransaction.categorys.cat_type == 'I' %}
                       <td>{{alltransaction.tfrom.name}}</td>
                       <td style="color: #2CFF05"><strong>$ {{alltransaction.amount|floatformat:2}}</strong></td>
                       {% else %}

@@ -145,6 +145,9 @@ class AccountListView(ListView):
 	template_name='myfinance/account_list.html'
 	context_object_name='accounts'
 
+	def get_queryset(self):
+		return Account.objects.filter(owner=self.request.user)
+
 class AccountUpdateView(UpdateView):
 	model=Account
 	form_class=AccountChangeForm

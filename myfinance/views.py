@@ -186,3 +186,11 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
                 'account_types': Account.account_types
             })
         return super().get(request, *args, **kwargs)
+
+class CategoryListView(ListView):
+	model=Category
+	template_name='myfinance/category_list.html'
+	context_object_name='categorys'
+
+	def get_queryset(self):
+		return Category.objects.filter(owner=self.request.user)

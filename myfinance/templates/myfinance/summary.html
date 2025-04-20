@@ -19,8 +19,13 @@
 
 {% block maincontent %}
     <div class="position-fixed end-0 bottom-0 p-3">
-        <a class="btn btn-outline-warning" href="#" role="button"><i class="bi bi-house"></i></a>
+        <a class="btn btn-outline-warning" href="{% url 'myfinance:home' %}" role="button"><i class="bi bi-house"></i></a>
     </div>
+    <div class="container mx-auto mt-3">
+        <h1 class="text-center text-white">Personal Finance Manager</h1>
+        <h6 class="text-center text-white fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
+    </div>
+    <hr class="border border-success border-1 opacity-50">    
     <div class="container text-white">
         <h1 class="display-6 text-center my-3">DASHBOARD</h1>
         <div class="container my-3 rounded-4 p-3 text-ce" style="background-color: #27293d; border-color:#27293d;">

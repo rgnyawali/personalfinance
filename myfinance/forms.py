@@ -34,9 +34,9 @@ class TransactionForm(forms.ModelForm):
 				'breakdown_option':forms.Select(attrs={'onchange':'hideMonth()'})
 				}
 	def __init__(self, *args, **kwargs):
-		print('****************************')
+		#print('****************************')
 		user = kwargs.pop('owner', None)  # Extract user from kwargs
-		print(user.email)
+		#print(user.email)
 		super().__init__(*args, **kwargs)
         
 		if user:
@@ -49,7 +49,7 @@ class TransactionForm(forms.ModelForm):
 			for category in categories:
 				grouped_choices.setdefault([item for item in Category.cat_types if category.cat_type in item][0][1], []).append((category.id, category.name))
 				#grouped_choices.setdefault(category.cat_type, []).append((category.id, category.name))
-			print(grouped_choices)
+			#print(grouped_choices)
 			self.fields['categorys'].choices = self._get_grouped_choices(grouped_choices)
 
 	def _get_grouped_choices(self, grouped_choices):

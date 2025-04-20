@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}    <title>Account List</title> {% endblock %}
+{% block title %}    <title>Category List</title> {% endblock %}
 {% block additionalstyles %}
     <script src="https://unpkg.com/htmx.org@1.9.4"></script>
     <style>
-        .account-item {
+        .category-item {
             transition: background-color 0.3s;
         }
-        .account-item:hover {
+        .category-item:hover {
             background-color: #f8f9fa;
         }
         .edit-icon {
@@ -25,31 +25,28 @@
     <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
 </div>
 <nav class="navbar bg-success bg-opacity-75 mb-3">
-    <h2 class="text-white text-center mx-auto"><i class="bi-bank pe-3"></i> Vendor List</h2>
+    <h2 class="text-white text-center mx-auto"><i class="bi-tags pe-3"></i> Category List</h2>
 </nav>
 
   
     <div class="container mt-4">
         <div class="my-4 text-end">
-            <a href="{% url 'myfinance:createaccount' %}" class="btn btn-primary">Add New Vendor</a>
+            <a href="{% url 'myfinance:category-create' %}" class="btn btn-primary">Add New Category</a>
         </div>
 
         <div class="list-group">
-            {% for account in accounts %}
-                <div id="account-{{account.pk}}" class="list-group-item account-item">
+            {% for category in categorys %}
+                <div id="category-{{category.pk}}" class="list-group-item category-item">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 class="mb-1">{{ account.name }}{% if account.track %}<span class="ms-2 badge bg-info"> Tracked</span>{% endif %}</h5>
+                            <h5 class="mb-1">{{ category.name }}</h5>
                             <p class="mb-1 text-muted">
-                                {% if account.account_type == 'v' %}Vendor{% else %}Self{% endif %} Account
+                                {% if category.cat_type == 'I' %}Income {% elif  category.cat_type == 'E' %}Expense{% else %}Transfer{% endif %}
                             </p>
-                            {% if account.address %}
-                                <small class="text-muted">{{ account.address }}</small>
-                            {% endif %}
                         </div>
                         <button class="btn btn-sm btn-link edit-icon"
-                            hx-get="{% url 'myfinance:account-edit' account.pk %}"
-                            hx-target="#account-{{account.pk}}"
+                            hx-get="{% url 'myfinance:category-edit' category.pk %}"
+                            hx-target="#category-{{category.pk}}"
                             hx-swap="outerHTML">
                             ✏️
                         </button>

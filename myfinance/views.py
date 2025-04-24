@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from .forms import AccountForm, TransactionForm, DownloadRangeForm, AccountChangeForm
+from .forms import AccountForm, TransactionForm, DownloadRangeForm, AccountChangeForm, CategoryForm, CategoryChangeForm
 from django.utils import timezone
 from .models import Account, Transaction, Category
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -194,3 +194,56 @@ class CategoryListView(ListView):
 
 	def get_queryset(self):
 		return Category.objects.filter(owner=self.request.user)
+
+class CreateCategory(LoginRequiredMixin,View):
+	def get(self,request):
+		form = CategoryForm()
+		return render(request, 'myfinance/createcategory.html',{'form':form})
+
+	def post(self,request):
+		form=CategoryForm(request.POST)
+		if form.is_valid():
+			obj=form.save(commit=False)
+			obj.owner=self.request.user
+			obj.save()
+			return redirect(reverse('myfinance:home'))
+		return render(request,'myfinance/createcategory.html',{'form':form})
+
+class CategoryUpdateView(LoginRequiredMixin, UpdateView):
+    model = Category
+    form_class = CategoryChangeForm
+    template_name = 'myfinance/category_edit_form.html'
+    success_url = reverse_lazy('myfinance:category-list')
+    
+    def get_queryset(self):
+        return Category.objects.filter(owner=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cat_types'] = Category.cat_types
+        return context
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        if self.request.headers.get('HX-Request'):
+            # Return just the updated account item HTML
+            return render(self.request, 'myfinance/category_list_item.html', {'category': self.object})
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        if self.request.headers.get('HX-Request'):
+            return render(self.request, self.template_name, {
+                'form': form, 
+                'category': self.get_object(),
+                'cat_types': Category.cat_types
+            })
+        return super().form_invalid(form)
+    
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.headers.get('HX-Request'):
+            return render(request, self.template_name, {
+                'category': self.object,
+                'cat_types': Category.cat_types
+            })
+        return super().get(request, *args, **kwargs)

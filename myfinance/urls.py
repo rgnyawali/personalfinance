@@ -16,9 +16,9 @@ urlpatterns = [
     path('edit/<int:pk>',views.AccountUpdateView.as_view(),name='account-edit'),
 
     #=== Category List, Create and Edit
-    path('createcategory/',views.CategoryListView.as_view(),name='category-create'), #CreateCategory
+    path('createcategory/',views.CreateCategory.as_view(),name='category-create'), #CreateCategory
     path('listcategory/',views.CategoryListView.as_view(),name='category-list'),
-    path('editcategory/<int:pk>',views.CategoryListView.as_view(),name='category-edit'), #CategoryUpdateView
+    path('editcategory/<int:pk>',views.CategoryUpdateView.as_view(),name='category-edit'), #CategoryUpdateView
 
     #path('summary/<int:year>',views.yearly_summary,name='yearly_summary'),
     #path('summary/<int:year>/<int:month>',views.monthly_summary,name='monthly_summary'),

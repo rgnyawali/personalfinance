@@ -64,3 +64,15 @@ class AccountChangeForm(forms.ModelForm):
 		model=Account
 		#fields='__all__'
 		exclude=['owner',]
+
+class CategoryForm(forms.ModelForm):
+	class Meta:
+		model=Category 
+		exclude=['owner']
+		labels={'cat_type':'Type of Category'}
+
+class CategoryChangeForm(forms.ModelForm):
+	class Meta:
+		model=Category
+		#fields='__all__'
+		exclude=['owner',]

@@ -1,0 +1,30 @@
+{% load static %}
+<div id="category-{{category.pk}}" class="list-group-item">
+    <form hx-post="{% url 'myfinance:category-edit' category.pk %}" 
+          hx-target="#category-{{category.pk}}" 
+          class="mt-2 mb-2 p-3 border rounded">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ category.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="cat_type" class="form-label">Type of Category</label>
+            <select class="form-select" id="cat_type" name="cat_type" required>
+                {% for type_code, type_name in cat_types %}
+                    <option value="{{ type_code }}" {% if category.cat_type == type_code %}selected{% endif %}>{{ type_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" 
+                hx-get="{% url 'myfinance:category-list' %}"
+                hx-target="#category-{{category.pk}}"
+                hx-select="#category-{{category.pk}}"
+                hx-swap="outerHTML">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>

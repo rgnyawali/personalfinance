@@ -7,12 +7,25 @@
 </div>
 <div class="container d-grid gap-2 mx-auto">
   {% if user.is_authenticated %}
-  <div class="text-end"><button type="button" class="btn btn-success"><i class="bi bi-person-circle"></i></button></div>
-  <p>Hi {{ user.email }}! </p>
-  <form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Log Out</button>
-  </form>
+  <div class="d-flex justify-content-end mt-2">
+    <div class="dropdown">
+      <button class="btn btn-outline-success rounded-circle d-flex align-items-center justify-content-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 44px; height: 44px;">
+        <i class="bi bi-person-circle fs-3"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm animate__animated animate__fadeIn" aria-labelledby="userDropdown" style="min-width: 200px;">
+        <li>
+          <span class="dropdown-item-text fw-semibold text-center">Hello, {{ user.email }}</span>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <form action="{% url 'logout' %}" method="post" class="d-flex justify-content-center mb-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm w-100">Log Out</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
   <hr class="border border-success border-1 opacity-50">
   <a href="{% url 'myfinance:transaction' %}" class="btn btn-success btn-lg" role="button"><i class="bi-coin pe-3"></i> Transaction</a>
   <a href="{% url 'myfinance:summary' %}" class="btn btn-success btn-lg" role="button"><i class="bi-pie-chart-fill pe-3"></i> Summary</a>

@@ -15,24 +15,32 @@
         {% endblock %}
         {% block additionalstyles %}
         {% endblock %}
+        <style>
+            html, body { height: 100%; margin: 0; padding: 0; }
+            body { min-height: 100vh; display: flex; flex-direction: column; }
+            .wrapper { flex: 1 0 auto; display: flex; flex-direction: column; }
+            .footer { flex-shrink: 0; }
+        </style>
     </head>
     {% block bodysetting %}
     <body>
     {% endblock %}
-        <div id="loading">      
-            <div class="d-flex align-items-center justify-content-center" style="height:50vh;">
-                <div class="spinner-border text-success" role="status"></div>
-                <div class="ps-3 text-success">Please wait... We are loading your data!</div>
+        <div class="wrapper">
+            <div id="loading">      
+                <div class="d-flex align-items-center justify-content-center" style="height:50vh;">
+                    <div class="spinner-border text-success" role="status"></div>
+                    <div class="ps-3 text-success">Please wait... We are loading your data!</div>
+                </div>
+            </div>
+            <div id="content">
+                <div class="position-fixed end-0 bottom-0 p-3">
+                    <a class="btn btn-outline-warning" href="{% url 'myfinance:home' %}" role="button"><i class="bi bi-house"></i></a>
+                </div>        
+                {% block  maincontent %}
+                {% endblock %}
             </div>
         </div>
-        <div id="content">
-            <div class="position-fixed end-0 bottom-0 p-3">
-                <a class="btn btn-outline-warning" href="{% url 'myfinance:home' %}" role="button"><i class="bi bi-house"></i></a>
-            </div>        
-            {% block  maincontent %}
-            {% endblock %}
-        </div>
-        <div>
+        <div class="footer">
             <hr class="border border-success border-1 opacity-50">
             <h1></h1>
             {% block copyright %}
@@ -72,4 +80,3 @@
         //simulateLoading();
     </script>  
 </html>
-  

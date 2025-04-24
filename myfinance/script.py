@@ -31,7 +31,7 @@ def get_data(owner):
     df2.fillna(0,inplace=True)
     month12=df2.index.strftime("%b %Y").tolist()
     month6=df2[-6:].index.strftime("%b %Y").tolist()
-
+    #print(df)
     income12=df2['income'].astype(float).to_list()
     income6=df2[-6:]['income'].astype(float).to_list()
 
@@ -97,7 +97,7 @@ def get_detail_data(n, owner):
     EXPENSE_CATEGORY=[each.pk for each in ecats]
     EXPENSE_LABELS=[each.name for each in ecats]
 
-    df=pd.DataFrame.from_records(Transaction.objects.filter(owner=owner).filter(date__gte=dt.date.today()+relativedelta(months=-n)).filter(date__lte=dt.date.today()).values_list('date','category','amount'),columns=['date','category','amount'])
+    df=pd.DataFrame.from_records(Transaction.objects.filter(owner=owner).filter(date__gte=dt.date.today()+relativedelta(months=-n)).filter(date__lte=dt.date.today()).values_list('date','categorys','amount'),columns=['date','category','amount'])
     df=df.astype({'date':'datetime64[ns]'})
 
     x_expense=df[df.category.isin(EXPENSE_CATEGORY)]
@@ -106,6 +106,7 @@ def get_detail_data(n, owner):
     pivot_df=pivot_df.reset_index()
     month_expense_list = pivot_df['month'].dt.strftime('%b %Y').tolist()
     
+    print(month_expense_list)
     expense_label_dict=dict(Transaction.categories[0][1])
 
     expense_dict={}

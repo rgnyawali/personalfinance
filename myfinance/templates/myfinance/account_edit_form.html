@@ -1,5 +1,5 @@
 {% load static %}
-<div id="account-{{account.pk}}" class="list-group-item">
+<div id="account-{{account.pk}}" class="list-group-item bg-warning-subtle">
     <form hx-post="{% url 'myfinance:account-edit' account.pk %}" 
           hx-target="#account-{{account.pk}}" 
           class="mt-2 mb-2 p-3 border rounded">

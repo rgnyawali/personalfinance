@@ -1,5 +1,5 @@
 {% load static %}
-<div id="category-{{category.pk}}" class="list-group-item">
+<div id="category-{{category.pk}}" class="list-group-item bg-warning-subtle">
     <form hx-post="{% url 'myfinance:category-edit' category.pk %}" 
           hx-target="#category-{{category.pk}}" 
           class="mt-2 mb-2 p-3 border rounded">

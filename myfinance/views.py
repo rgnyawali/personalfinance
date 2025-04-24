@@ -146,7 +146,7 @@ class AccountListView(ListView):
 	context_object_name='accounts'
 
 	def get_queryset(self):
-		return Account.objects.filter(owner=self.request.user)
+		return Account.objects.filter(owner=self.request.user).order_by('name')
 
 class AccountUpdateView(LoginRequiredMixin, UpdateView):
     model = Account

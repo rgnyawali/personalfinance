@@ -28,8 +28,8 @@ def homeview(request):
 @login_required
 def details(request, detail):
 	owner=request.user
-	month4_list, expense4_dict, month4_income_list, income4_dict, income_table, expense_table = get_detail_data(4,owner)
-	month12_list, expense12_dict, month12_income_list, income12_dict, _ , _ = get_detail_data(12,owner)
+	month4_list, expense4_dict, month4_income_list, income4_dict, _ , _ = get_detail_data(4,owner)
+	month12_list, expense12_dict, month12_income_list, income12_dict, income_table , expense_table = get_detail_data(12,owner)
 	ctx={'detail':detail,'month6_list':month4_list,'expense6_dict':expense4_dict,'month12_list':month12_list,'expense12_dict':expense12_dict, 
 		'month4_income_list':month4_income_list,'income4_dict':income4_dict,'month12_income_list':month12_income_list,'income12_dict':income12_dict,'income_table':income_table,
 		'expense_table':expense_table}

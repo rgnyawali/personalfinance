@@ -262,7 +262,15 @@ plugins: {
 }
 });
 </script>
-
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("td").forEach(function(td) {
+      if (td.textContent.trim() === "0.00") {
+        td.textContent = "-";
+      }
+    });
+  });
+</script>
 {% endblock %}
 {% block copyright %}
     <p class="text-center text-white-50"><i class="bi-c-circle"></i> Roshan, 2025</p>

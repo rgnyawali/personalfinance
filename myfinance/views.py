@@ -247,3 +247,53 @@ class CategoryUpdateView(LoginRequiredMixin, UpdateView):
                 'cat_types': Category.cat_types
             })
         return super().get(request, *args, **kwargs)
+
+class UserSummaryView(LoginRequiredMixin, View):
+    def get(self, request):
+        owner = request.user
+        today = timezone.now().date()
+        start_date = today - relativedelta(months=12)
+        # Get all transactions for the last 12 months
+        transactions = Transaction.objects.filter(owner=owner, date__gte=start_date, date__lte=today)
+
+        # Use category name for columns
+        # Get all categories used in these transactions
+        categories = list(
+            transactions.values_list('categorys__name', flat=True).distinct()
+        )
+        # Get all months in the period
+        months = pd.date_range(start=start_date, end=today, freq='MS').to_pydatetime().tolist()
+        month_labels = [dt.datetime.strftime(m, '%b %Y') for m in months]
+
+        # Prepare data for pivot
+        data = transactions.values('date', 'amount', 'categorys__name')
+        df = pd.DataFrame(list(data))
+        if df.empty:
+            table_rows = [
+                {'month': label, 'values': {cat: '0.00' for cat in categories}}
+                for label in month_labels
+            ]
+        else:
+            df['month'] = df['date'].apply(lambda d: d.replace(day=1))
+            pivot = df.pivot_table(
+                index='month',
+                columns='categorys__name',
+                values='amount',
+                aggfunc='sum',
+                fill_value=0
+            )
+            pivot = pivot.reindex(months, fill_value=0)
+            table_rows = []
+            for i, row in enumerate(pivot.itertuples(index=False, name=None)):
+                vals = {cat: f"{row[j]:,.2f}" if cat in pivot.columns else '0.00' for j, cat in enumerate(pivot.columns)}
+                # Fill missing categories
+                for cat in categories:
+                    if cat not in vals:
+                        vals[cat] = '0.00'
+                table_rows.append({'month': month_labels[i], 'values': vals})
+
+        context = {
+            'categories': categories,
+            'table_rows': table_rows,
+        }
+        return render(request, 'myfinance/user_summary.html', context)

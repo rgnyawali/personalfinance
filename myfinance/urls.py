@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from .views import UserSummaryView
 
 app_name = 'myfinance'
 
@@ -24,5 +25,6 @@ urlpatterns = [
     #path('summary/<int:year>/<int:month>',views.monthly_summary,name='monthly_summary'),
     #path('transaction-detail/<int:pk>', views.transaction),
 
+    path('user-summary/', UserSummaryView.as_view(), name='user-summary'),
     path('details/<str:detail>', views.details, name='details'),
 ]

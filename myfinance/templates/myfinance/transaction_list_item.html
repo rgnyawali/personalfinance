@@ -1,0 +1,16 @@
+<div id="transaction-{{transaction.pk}}" class="list-group-item transaction-item">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-1">{{ transaction.tfrom }} : {{transaction.tto}}:{{transaction.amount}}:{{transaction.date}}</h5>
+            <p class="mb-1 text-muted">
+                {% if transaction.categorys.cat_type == 'I' %}Income {% elif  transaction.categorys.cat_type == 'E' %}Expense {% elif  transaction.categorys.cat_type == 'T' %}Transfer {% else %}None{% endif %}
+            </p>
+</div>
+        <button class="btn btn-sm btn-link edit-icon"
+            hx-get="{% url 'myfinance:transaction-edit' transaction.pk %}"
+            hx-target="#transaction-{{transaction.pk}}"
+            hx-swap="outerHTML">
+            ✏️
+        </button>
+    </div>
+</div>

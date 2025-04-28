@@ -76,3 +76,9 @@ class CategoryChangeForm(forms.ModelForm):
 		model=Category
 		#fields='__all__'
 		exclude=['owner',]
+
+class TransactionChangeForm(forms.ModelForm):
+	class Meta:
+		model=Transaction
+		#fields='__all__'
+		exclude=['owner','breakdown_option','start_date','number_month','number_year']

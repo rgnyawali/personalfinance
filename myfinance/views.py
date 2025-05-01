@@ -232,6 +232,39 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     
     def get_queryset(self):
         return Transaction.objects.filter(owner=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['accounts'] = Account.objects.filter(owner=self.request.user)
+        context['categories'] = Category.objects.filter(owner=self.request.user)
+        return context
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        if self.request.headers.get('HX-Request'):
+            # Return just the updated transaction item HTML
+            return render(self.request, 'myfinance/transaction_list_item.html', {'transaction': self.object})
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        if self.request.headers.get('HX-Request'):
+            return render(self.request, self.template_name, {
+                'form': form, 
+                'transaction': self.get_object(),
+                'accounts': Account.objects.filter(owner=self.request.user),
+                'categories': Category.objects.filter(owner=self.request.user)
+            })
+        return super().form_invalid(form)
+    
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.headers.get('HX-Request'):
+            return render(request, self.template_name, {
+                'transaction': self.object,
+                'accounts': Account.objects.filter(owner=self.request.user),
+                'categories': Category.objects.filter(owner=self.request.user)
+            })
+        return super().get(request, *args, **kwargs)
 
 
 class CategoryUpdateView(LoginRequiredMixin, UpdateView):

@@ -1,0 +1,16 @@
+{% load static %}
+<tr>
+  <td>{{ transaction.date }}</td>
+  <td>{{ transaction.tfrom }}</td>
+  <td>{{ transaction.tto }}</td>
+  <td>${{ transaction.amount }}</td>
+  <td>{{ transaction.categorys }}</td>
+  <td>
+    <button class="btn btn-sm btn-primary" 
+            hx-get="{% url 'myfinance:transaction-edit' transaction.pk %}" 
+            hx-target="closest tr" 
+            hx-swap="outerHTML">
+      Edit
+    </button>
+  </td>
+</tr>

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  <title>Edit Transaction</title>
+{% endblock %}
+{% block maincontent %}
+  <div class="container mx-auto mt-3">
+    <h1 class="text-center">Personal Finance Manager</h1>
+    <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
+  </div>
+  
+  <nav class="navbar bg-success bg-opacity-75 mb-3">
+    <h2 class="text-white text-center mx-auto"><i class="bi-coin pe-3"></i> Edit Transaction</h2>
+  </nav>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <form method="POST">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <a href="{% url 'myfinance:transaction-list' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

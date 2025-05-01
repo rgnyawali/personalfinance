@@ -16,7 +16,7 @@ import csv
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, UpdateView
-#np.set_printoptions(legacy='1.25')
+from django.views.generic.edit import UpdateView
 
 
 
@@ -208,6 +208,31 @@ class CreateCategory(LoginRequiredMixin,View):
 			obj.save()
 			return redirect(reverse('myfinance:home'))
 		return render(request,'myfinance/createcategory.html',{'form':form})
+
+# Transaction List and Edit Views
+class TransactionListView(LoginRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'myfinance/transaction_list.html'
+    context_object_name = 'transactions'
+    ordering = ['-date']
+    
+    def get_queryset(self):
+        return Transaction.objects.filter(owner=self.request.user).order_by('-date')
+
+class TransactionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Transaction
+    form_class = TransactionForm
+    template_name = 'myfinance/transaction_edit_form.html'
+    success_url = reverse_lazy('myfinance:transaction-list')
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['owner'] = self.request.user
+        return kwargs
+    
+    def get_queryset(self):
+        return Transaction.objects.filter(owner=self.request.user)
+
 
 class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = Category

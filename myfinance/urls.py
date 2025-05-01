@@ -21,6 +21,10 @@ urlpatterns = [
     path('listcategory/',views.CategoryListView.as_view(),name='category-list'),
     path('editcategory/<int:pk>',views.CategoryUpdateView.as_view(),name='category-edit'), #CategoryUpdateView
 
+    # Transaction List and Edit
+    path('transactions/', views.TransactionListView.as_view(), name='transaction-list'),
+    path('edittransaction/<int:pk>', views.TransactionUpdateView.as_view(), name='transaction-edit'),
+
     #path('summary/<int:year>',views.yearly_summary,name='yearly_summary'),
     #path('summary/<int:year>/<int:month>',views.monthly_summary,name='monthly_summary'),
     #path('transaction-detail/<int:pk>', views.transaction),

@@ -25,6 +25,9 @@ from django.views.generic import ListView, UpdateView
 def homeview(request):
 	return render(request, 'myfinance/home.html',{})
 
+def settings(request):
+    return render(request,'myfinance/settings.html',{})
+
 @login_required
 def details(request, detail):
 	owner=request.user
@@ -304,7 +307,7 @@ class TransactionListView(LoginRequiredMixin, ListView):
 	context_object_name='transactions'
 
 	def get_queryset(self):
-		return Transaction.objects.filter(owner=self.request.user).order_by('categorys','-date')
+		return Transaction.objects.filter(owner=self.request.user).order_by('-date')
 
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Transaction

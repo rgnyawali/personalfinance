@@ -89,6 +89,7 @@ class TransactionChangeForm(forms.ModelForm):
 				'categorys':'Category',
 				'comment': 'Comments',
 				}
+		widgets={'date':forms.DateInput(attrs={'type':'date'})}
 
 	def __init__(self, *args, **kwargs):
 		super(TransactionChangeForm, self).__init__(*args, **kwargs)

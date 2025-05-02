@@ -10,6 +10,7 @@ urlpatterns = [
     path('transaction/',views.TransactionView.as_view(),name='transaction'),
     path('vendor/',views.AccountView.as_view(),name='vendor'),
     path('summary/',views.summary, name='summary'),
+    path('settings/',views.settings, name='settings'),
 
     #==== Vendor Account List, Create and Edit
     path('createaccount/',views.CreateAccount.as_view(),name='createaccount'),

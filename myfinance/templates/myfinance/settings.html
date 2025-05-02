@@ -27,9 +27,9 @@
     </div>
   </div>
   <hr class="border border-success border-1 opacity-50">
-  <a href="{% url 'myfinance:account-list' %}" class="btn btn-success btn-lg" role="button"><i class="bi-bank pe-3"></i> Manage Vendors</a>
+  <a href="{% url 'myfinance:account-list' %}" class="btn btn-success btn-lg" role="button"><i class="bi-bank pe-3"></i> Manage Accounts</a>
   <a href="{% url 'myfinance:category-list' %}" class="btn btn-success btn-lg" role="button"><i class="bi-tags pe-3"></i> Manage Categories</a>
-  <a href="{% url 'myfinance:transaction-list' %}" class="btn btn-success btn-lg" role="button"><i class="bi-tags pe-3"></i> Manage Transactions</a>
+  <a href="{% url 'myfinance:transaction-list' %}" class="btn btn-success btn-lg" role="button"><i class="bi-coin pe-3"></i> Manage Transactions</a>
   {% else %}
   <hr class="border border-success border-1 opacity-50">
   <a href="{% url 'login' %}" class="btn btn-success btn-lg" role="button"><i class="bi-person-video pe-3"></i> Login</a>

@@ -1,42 +1,19 @@
-{% load static %}
-<div id="transaction-{{transaction.pk}}" class="list-group-item bg-warning-subtle">
+<tr id="transaction-{{transaction.pk}}" class="bg-warning-subtle">
+    <td colspan="6">
     <form hx-post="{% url 'myfinance:transaction-edit' transaction.pk %}" 
-          hx-target="#transaction-{{transaction.pk}}" 
+          hx-target="#transaction-{{transaction.pk}}"
           class="mt-2 mb-2 p-3 border rounded">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="tfrom" class="form-label">From</label>
-            <input type="text" class="form-control" id="tfrom" name="tfrom" value="{{ transaction.tfrom }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="tto" class="form-label">To</label>
-            <input type="text" class="form-control" id="tto" name="tto" value="{{ transaction.tto }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="amount" class="form-label">Amount</label>
-            <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="{{ transaction.amount }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="date" class="form-label">Date</label>
-            <input type="date" class="form-control" id="date" name="date" value="{{ transaction.date }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="cat_type" class="form-label">Category</label>
-            <select class="form-select" id="cat_type" name="cat_type" required>
-                <!-- {% for type_code, type_name in category.cat_types %} -->
-                    <option value="{{ transaction.categorys }}">{{ transaction.categorys }}</option>
-                <!--{% endfor %}-->
-            </select>
-        </div>
+        {{ form.as_p }}
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary">Save</button>
             <button type="button" class="btn btn-secondary" 
-                hx-get="{% url 'myfinance:category-list' %}"
-                hx-target="#category-{{category.pk}}"
-                hx-select="#category-{{category.pk}}"
+                hx-get="{% url 'myfinance:transaction-list' %}"
+                hx-target="#transaction-{{transaction.pk}}"
+                hx-select="#transaction-{{transaction.pk}}"
                 hx-swap="outerHTML">
                 Cancel
             </button>
-        </div>
-    </form>
-</div>
+        </div>   
+    </td>
+</tr>

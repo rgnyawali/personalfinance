@@ -193,7 +193,7 @@ class CategoryListView(ListView):
 	context_object_name='categorys'
 
 	def get_queryset(self):
-		return Category.objects.filter(owner=self.request.user)
+		return Category.objects.filter(owner=self.request.user).order_by('name')
 
 class CreateCategory(LoginRequiredMixin,View):
 	def get(self,request):
@@ -313,12 +313,7 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('myfinance:transaction-list')
     
     def get_queryset(self):
-        return Transaction.objects.filter(owner=self.request.user).order_by('categorys','-date')
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cat_types'] = Category.cat_types
-        return context
+        return Transaction.objects.filter(owner=self.request.user).order_by('-date')
     
     def form_valid(self, form):
         self.object = form.save()
@@ -332,15 +327,5 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
             return render(self.request, self.template_name, {
                 'form': form, 
                 'transaction': self.get_object(),
-                'cat_types': Category.cat_types
             })
         return super().form_invalid(form)
-    
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if request.headers.get('HX-Request'):
-            return render(request, self.template_name, {
-                'transaction': self.object,
-                'cat_types': Category.cat_types
-            })
-        return super().get(request, *args, **kwargs)

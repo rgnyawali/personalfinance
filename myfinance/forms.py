@@ -82,3 +82,15 @@ class TransactionChangeForm(forms.ModelForm):
 		model=Transaction
 		#fields='__all__'
 		exclude=['owner','breakdown_option','start_date','number_month','number_year']
+		labels={'tfrom':'From',
+				'tto':'To',
+				'amount':'Amount ($)',
+				'date':'Transaction Date',
+				'categorys':'Category',
+				'comment': 'Comments',
+				}
+
+	def __init__(self, *args, **kwargs):
+		super(TransactionChangeForm, self).__init__(*args, **kwargs)
+		for field in self.fields.values():
+			field.widget.attrs.update({'class': 'form-control'})

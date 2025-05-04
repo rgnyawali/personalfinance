@@ -16,7 +16,8 @@
         }
         .edit-icon:hover {
             opacity: 1;
-        }
+        }        
+        label {font-weight: bold;}
     </style>
 {% endblock %}
 {% block maincontent %}    
@@ -25,13 +26,13 @@
     <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
 </div>
 <nav class="navbar bg-success bg-opacity-75 mb-3">
-    <h2 class="text-white text-center mx-auto"><i class="bi-bank pe-3"></i> Vendor List</h2>
+    <h2 class="text-white text-center mx-auto"><i class="bi-bank pe-3"></i> Manage Accounts</h2>
 </nav>
 
   
     <div class="container mt-4">
         <div class="my-4 text-end">
-            <a href="{% url 'myfinance:createaccount' %}" class="btn btn-primary">Add New Vendor</a>
+            <a href="{% url 'myfinance:createaccount' %}" class="btn btn-primary">Add New Account</a>
         </div>
 
         <div class="list-group">

@@ -1,54 +1,70 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}
-  <title>Transaction List</title>
+{% block title %}    <title>Transaction List</title> {% endblock %}
+{% block additionalstyles %}
+    <script src="https://unpkg.com/htmx.org@1.9.4"></script>
+    <style>
+        .transaction-item {
+            transition: background-color 0.3s;
+        }
+        .transaction-item:hover {
+            background-color: #f8f9fa;
+        }
+        .edit-icon {
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        .edit-icon:hover {
+            opacity: 1;
+        }
+        label {font-weight: bold;}
+    </style>
 {% endblock %}
-{% block maincontent %}
-  <div class="container mx-auto mt-3">
+{% block maincontent %}    
+<div class="container mx-auto mt-3">
     <h1 class="text-center">Personal Finance Manager</h1>
     <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
-  </div>
+</div>
+<nav class="navbar bg-success bg-opacity-75 mb-3">
+    <h2 class="text-white text-center mx-auto"><i class="bi-coin pe-3"></i> Manage Transaction</h2>
+</nav>
+
   
-  <nav class="navbar bg-success bg-opacity-75 mb-3">
-    <h2 class="text-white text-center mx-auto"><i class="bi-coin pe-3"></i> Transaction List</h2>
-  </nav>
-
-  <div class="container">
-    <div class="d-flex justify-content-end mb-3">
-      <a href="{% url 'myfinance:transaction' %}" class="btn btn-success">Add New Transaction</a>
-    </div>
-
-    <div class="table-responsive">
-      <table class="table table-striped table-hover">
-        <thead class="table-success">
-          <tr>
-            <th>Date</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for transaction in transactions %}
-          <tr>
-            <td>{{ transaction.date }}</td>
-            <td>{{ transaction.tfrom }}</td>
-            <td>{{ transaction.tto }}</td>
-            <td>${{ transaction.amount }}</td>
-            <td>{{ transaction.categorys }}</td>
-            <td>
-              <a href="{% url 'myfinance:transaction-edit' transaction.pk %}" class="btn btn-sm btn-primary">Edit</a>
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6" class="text-center">No transactions found</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+<div class="container mt-4 table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-success">
+      <tr>
+        <th>Date</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Amount</th>
+        <th>Category</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for transaction in transactions %}  
+      <tr id="transaction-{{transaction.pk}}">
+        <td>{{transaction.date}}</td>
+        <td>{{transaction.tfrom}}</td>
+        <td>{{transaction.tto}}</td>
+        <td>{{transaction.amount}}</td>
+        <td>{{transaction.categorys}}</td>
+        <td>
+          <button class="btn btn-sm btn-link edit-icon"
+                  hx-get="{% url 'myfinance:transaction-edit' transaction.pk %}"
+                  hx-target="#transaction-{{transaction.pk}}"
+                  hx-swap="outerHTML">
+                  ✏️
+          </button>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="6">No Date Found</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

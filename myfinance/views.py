@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from .forms import AccountForm, TransactionForm, DownloadRangeForm, AccountChangeForm, CategoryForm, CategoryChangeForm
+from .forms import AccountForm, TransactionForm, DownloadRangeForm, AccountChangeForm, CategoryForm, CategoryChangeForm, TransactionChangeForm
 from django.utils import timezone
 from .models import Account, Transaction, Category
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -24,6 +24,9 @@ from django.views.generic.edit import UpdateView
 
 def homeview(request):
 	return render(request, 'myfinance/home.html',{})
+
+def settings(request):
+    return render(request,'myfinance/settings.html',{})
 
 @login_required
 def details(request, detail):
@@ -193,7 +196,7 @@ class CategoryListView(ListView):
 	context_object_name='categorys'
 
 	def get_queryset(self):
-		return Category.objects.filter(owner=self.request.user)
+		return Category.objects.filter(owner=self.request.user).order_by('name')
 
 class CreateCategory(LoginRequiredMixin,View):
 	def get(self,request):
@@ -355,3 +358,35 @@ class UserSummaryView(LoginRequiredMixin, View):
             'table_rows': table_rows,
         }
         return render(request, 'myfinance/user_summary.html', context)
+
+class TransactionListView(LoginRequiredMixin, ListView):
+	model=Transaction
+	template_name='myfinance/transaction_list.html'
+	context_object_name='transactions'
+
+	def get_queryset(self):
+		return Transaction.objects.filter(owner=self.request.user).order_by('-date')
+
+class TransactionUpdateView(LoginRequiredMixin, UpdateView):
+    model = Transaction
+    form_class = TransactionChangeForm
+    template_name = 'myfinance/transaction_edit_form.html'
+    success_url = reverse_lazy('myfinance:transaction-list')
+    
+    def get_queryset(self):
+        return Transaction.objects.filter(owner=self.request.user).order_by('-date')
+    
+    def form_valid(self, form):
+        self.object = form.save()
+        if self.request.headers.get('HX-Request'):
+            # Return just the updated account item HTML
+            return render(self.request, 'myfinance/transaction_list_item.html', {'transaction': self.object})
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        if self.request.headers.get('HX-Request'):
+            return render(self.request, self.template_name, {
+                'form': form, 
+                'transaction': self.get_object(),
+            })
+        return super().form_invalid(form)

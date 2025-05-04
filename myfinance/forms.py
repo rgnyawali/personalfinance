@@ -76,3 +76,22 @@ class CategoryChangeForm(forms.ModelForm):
 		model=Category
 		#fields='__all__'
 		exclude=['owner',]
+
+class TransactionChangeForm(forms.ModelForm):
+	class Meta:
+		model=Transaction
+		#fields='__all__'
+		exclude=['owner','breakdown_option','start_date','number_month','number_year']
+		labels={'tfrom':'From',
+				'tto':'To',
+				'amount':'Amount ($)',
+				'date':'Transaction Date',
+				'categorys':'Category',
+				'comment': 'Comments',
+				}
+		widgets={'date':forms.DateInput(attrs={'type':'date'})}
+
+	def __init__(self, *args, **kwargs):
+		super(TransactionChangeForm, self).__init__(*args, **kwargs)
+		for field in self.fields.values():
+			field.widget.attrs.update({'class': 'form-control'})

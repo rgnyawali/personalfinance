@@ -10,6 +10,7 @@ urlpatterns = [
     path('transaction/',views.TransactionView.as_view(),name='transaction'),
     path('vendor/',views.AccountView.as_view(),name='vendor'),
     path('summary/',views.summary, name='summary'),
+    path('settings/',views.settings, name='settings'),
 
     #==== Vendor Account List, Create and Edit
     path('createaccount/',views.CreateAccount.as_view(),name='createaccount'),
@@ -21,13 +22,9 @@ urlpatterns = [
     path('listcategory/',views.CategoryListView.as_view(),name='category-list'),
     path('editcategory/<int:pk>',views.CategoryUpdateView.as_view(),name='category-edit'), #CategoryUpdateView
 
-    # Transaction List and Edit
-    path('transactions/', views.TransactionListView.as_view(), name='transaction-list'),
-    path('edittransaction/<int:pk>', views.TransactionUpdateView.as_view(), name='transaction-edit'),
-
-    #path('summary/<int:year>',views.yearly_summary,name='yearly_summary'),
-    #path('summary/<int:year>/<int:month>',views.monthly_summary,name='monthly_summary'),
-    #path('transaction-detail/<int:pk>', views.transaction),
+    #=== Transaction List and Edit
+    path('listtransaction/',views.TransactionListView.as_view(),name='transaction-list'),
+    path('edittransaction/<int:pk>',views.TransactionUpdateView.as_view(),name='transaction-edit'),
 
     path('user-summary/', UserSummaryView.as_view(), name='user-summary'),
     path('details/<str:detail>', views.details, name='details'),

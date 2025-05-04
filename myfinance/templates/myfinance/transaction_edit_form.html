@@ -1,78 +1,19 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}
-  <title>Edit Transaction</title>
-{% endblock %}
-{% block maincontent %}
-  <div class="container mx-auto mt-3">
-    <h1 class="text-center">Personal Finance Manager</h1>
-    <h6 class="text-center fw-light"><em>Track your earnings and spending. Manage your savings</em></h6>
-  </div>
-  
-  <nav class="navbar bg-success bg-opacity-75 mb-3">
-    <h2 class="text-white text-center mx-auto"><i class="bi-coin pe-3"></i> Edit Transaction</h2>
-  </nav>
-
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-body">
-            <form method="post" hx-post="{% url 'myfinance:transaction-edit' transaction.pk %}" 
-                  hx-target="this" 
-                  hx-swap="outerHTML">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="{{ form.date.id_for_label }}" class="form-label">Date</label>
-                {{ form.date }}
-                {% if form.date.errors %}
-                  <div class="text-danger small">{{ form.date.errors.0 }}</div>
-                {% endif %}
-              </div>
-              <div class="mb-3">
-                <label for="{{ form.tfrom.id_for_label }}" class="form-label">From Account</label>
-                {{ form.tfrom }}
-                {% if form.tfrom.errors %}
-                  <div class="text-danger small">{{ form.tfrom.errors.0 }}</div>
-                {% endif %}
-              </div>
-              <div class="mb-3">
-                <label for="{{ form.tto.id_for_label }}" class="form-label">To Account</label>
-                {{ form.tto }}
-                {% if form.tto.errors %}
-                  <div class="text-danger small">{{ form.tto.errors.0 }}</div>
-                {% endif %}
-              </div>
-              <div class="mb-3">
-                <label for="{{ form.amount.id_for_label }}" class="form-label">Amount</label>
-                {{ form.amount }}
-                {% if form.amount.errors %}
-                  <div class="text-danger small">{{ form.amount.errors.0 }}</div>
-                {% endif %}
-              </div>
-              <div class="mb-3">
-                <label for="{{ form.categorys.id_for_label }}" class="form-label">Category</label>
-                {{ form.categorys }}
-                {% if form.categorys.errors %}
-                  <div class="text-danger small">{{ form.categorys.errors.0 }}</div>
-                {% endif %}
-              </div>
-              <div class="mb-3">
-                <label for="{{ form.comment.id_for_label }}" class="form-label">Comment</label>
-                {{ form.comment }}
-                {% if form.comment.errors %}
-                  <div class="text-danger small">{{ form.comment.errors.0 }}</div>
-                {% endif %}
-              </div>
-              <button type="submit" class="btn btn-success">Save</button>
-              <button type="button" class="btn btn-secondary" hx-get="{% url 'myfinance:transaction-list' %}" 
-                      hx-trigger="click" 
-                      hx-target="closest tr" 
-                      hx-swap="outerHTML">Cancel</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-{% endblock %}
+<tr id="transaction-{{transaction.pk}}" class="bg-warning-subtle">
+    <td colspan="6">
+    <form hx-post="{% url 'myfinance:transaction-edit' transaction.pk %}" 
+          hx-target="#transaction-{{transaction.pk}}"
+          class="mt-2 mb-2 p-3 border rounded">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" 
+                hx-get="{% url 'myfinance:transaction-list' %}"
+                hx-target="#transaction-{{transaction.pk}}"
+                hx-select="#transaction-{{transaction.pk}}"
+                hx-swap="outerHTML">
+                Cancel
+            </button>
+        </div>   
+    </td>
+</tr>

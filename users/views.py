@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.shortcuts import redirect
 from .forms import CustomUserCreationForm
 
@@ -16,3 +16,7 @@ class SignUpView(CreateView):
         # Log the user in
         login(self.request, self.object)
         return response
+
+def logout_then_redirect(request):
+    logout(request)
+    return redirect(request.GET.get('next', '/'))

@@ -2,7 +2,7 @@
     <td>{{transaction.date}}</td>
     <td>{{transaction.tfrom}}</td>
     <td>{{transaction.tto}}</td>
-    <td>{{transaction.amount}}</td>
+    <td>$ {{transaction.amount|floatformat:2}}</td>
     <td>{{transaction.categorys}}</td>
     <td>
       <button class="btn btn-sm btn-link edit-icon"

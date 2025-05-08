@@ -140,7 +140,7 @@ class CreateAccount(LoginRequiredMixin,View):
 			obj=form.save(commit=False)
 			obj.owner=self.request.user
 			obj.save()
-			return redirect(reverse('myfinance:home'))
+			return redirect(reverse('myfinance:account-list'))
 		return render(request,'myfinance/createaccount.html',{'form':form})
 
 class AccountListView(ListView):
@@ -209,7 +209,7 @@ class CreateCategory(LoginRequiredMixin,View):
 			obj=form.save(commit=False)
 			obj.owner=self.request.user
 			obj.save()
-			return redirect(reverse('myfinance:home'))
+			return redirect(reverse('myfinance:category-list'))
 		return render(request,'myfinance/createcategory.html',{'form':form})
 
 # Transaction List and Edit Views

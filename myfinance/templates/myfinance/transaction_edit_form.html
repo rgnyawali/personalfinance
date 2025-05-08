@@ -1,19 +1,20 @@
 <tr id="transaction-{{transaction.pk}}" class="bg-warning-subtle">
     <td colspan="6">
-    <form hx-post="{% url 'myfinance:transaction-edit' transaction.pk %}" 
-          hx-target="#transaction-{{transaction.pk}}"
-          class="mt-2 mb-2 p-3 border rounded">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <button type="button" class="btn btn-secondary" 
-                hx-get="{% url 'myfinance:transaction-list' %}"
-                hx-target="#transaction-{{transaction.pk}}"
-                hx-select="#transaction-{{transaction.pk}}"
-                hx-swap="outerHTML">
-                Cancel
-            </button>
-        </div>   
+        <form hx-post="{% url 'myfinance:transaction-edit' transaction.pk %}" 
+              hx-target="#transaction-{{transaction.pk}}"
+              hx-swap="outerHTML"
+              class="mt-2 mb-2 p-3 border rounded">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn-secondary" 
+                    hx-get="{% url 'myfinance:transaction-list' %}"
+                    hx-target="#transaction-{{transaction.pk}}"
+                    hx-swap="outerHTML">
+                    Cancel
+                </button>
+            </div>   
+        </form>
     </td>
 </tr>

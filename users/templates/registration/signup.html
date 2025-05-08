@@ -8,53 +8,82 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-      .form-container{width:60%;}
-      label{margin-top:25px;}
-      .errorlist{color:red;list-style-type: none;}
+      .form-container {
+        width: 60%;
+        max-width: 800px;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+      }
+      .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      .form-control {
+        border-radius: 0.25rem;
+        padding: 0.5rem 0.75rem;
+        width: 100%;
+      }
+      .errorlist {
+        color: #dc3545;
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 0.25rem;
+        font-size: 0.875em;
+      }
+      .helptext {
+        color: #6c757d;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+        display: block;
+      }
+      #id_usable_password {
+        display: none;
+      }
       @media only screen and (max-width: 1500px) {
         .form-container {
-          width:40%;
+          width: 50%;
         }
       }
-      @media only screen and (max-width: 900px) {
+      @media only screen and (max-width: 992px) {
         .form-container {
-          width:70%;
+          width: 70%;
         }
       }
-      @media only screen and (max-width: 500px) {
+      @media only screen and (max-width: 576px) {
         .form-container {
-          width:90%;
+          width: 90%;
         }
       }
-      form p {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      form label {
-        width: 200px; /* Adjust as needed */
-        text-align: right;
-        margin-right: 10px;
-      }
-
-      form input {
-        flex-grow: 1;
-        padding: 5px;
-      }
-      form div ul{list-style-type: none;color:grey; font-size: 12px;}
-      .helptext{color:grey; font-size: 12px;}
-      #id_password1_helptext ul li{color:grey; list-style-type:none;}
-      #id_usable_password{display:none;}
     </style>
   </head>
   <body>
-    <div class="container form-container border border-secondary-subtle border-2 rounded bg-body-secondary my-5">
+    <div class="container form-container border border-secondary-subtle border-2 rounded bg-body-secondary my-5 p-4">
       <div class="mb-3 text-center"><i class="bi bi-person-circle text-success" style="font-size: 6rem;"></i></div>
       <h4 class="mb-5 text-center">Create A New Account</h4>
-      <form method="post">
+      <form method="post" class="px-3">
         {% csrf_token %}
-        <div class="text-center">{{form.as_p}}</div>
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            {% for field in form %}
+              <div class="form-group">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {{ field.label }}
+                  {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                  <span class="helptext">{{ field.help_text|safe }}</span>
+                {% endif %}
+                {% if field.errors %}
+                  <div class="errorlist">{{ field.errors }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
         <div class="text-center mt-4">
           <input type="submit" class="btn btn-primary btn-lg mb-3" role="btn" value="Sign Up" />
           <input type="hidden" name="next" value="{{ next }}" />

@@ -58,9 +58,9 @@ def summary(request):
 			response['Content-Disposition']='attachment; filename="transaction.csv"'
 
 			writer=csv.writer(response)
-			writer.writerow(['Date','From','To','Amount','Comment'])
+			writer.writerow(['Date','From','To','Amount','Category','Comment'])
 			for each in data:
-				writer.writerow([each.date, each.tfrom, each.tto, each.amount, each.comment])
+				writer.writerow([each.date, each.tfrom, each.tto, each.amount, each.categorys, each.comment])
 			
 			return response
 	form=DownloadRangeForm()

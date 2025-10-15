@@ -1,0 +1,87 @@
+{% extends 'driving/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Quiz Results</h2>
+                </div>
+                <div class="card-body text-center">
+                    <!-- Score Circle -->
+                    <div class="d-flex justify-content-center mb-4">
+                        <div class="score-circle">
+                            <span class="display-4">{{ score_percentage|floatformat:0 }}%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Score Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Correct Answers</h5>
+                                    <p class="display-4 text-success">{{ correct_answers }}</p>
+                                    <p class="text-muted">out of {{ total_questions }} questions</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Score</h5>
+                                    <p class="display-4">{{ score_percentage|floatformat:1 }}%</p>
+                                    <p class="text-muted">
+                                        {% if score_percentage >= 80 %}
+                                            Excellent! 🎉
+                                        {% elif score_percentage >= 60 %}
+                                            Good job! 👍
+                                        {% else %}
+                                            Keep practicing! 💪
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="{% url 'driving:home' %}" class="btn btn-primary me-md-2">
+                            <i class="bi bi-house-door"></i> Back to Home
+                        </a>
+                        <a href="{% url 'driving:quiz_start' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-repeat"></i> Try Again
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        border: 10px solid #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+    
+    @media (max-width: 576px) {
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}

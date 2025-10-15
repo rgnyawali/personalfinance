@@ -1,0 +1,58 @@
+{% extends 'driving/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add New Question</h2>
+    
+<!--    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %} -->
+    
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Question Details</h5>
+            </div>
+            <div class="card-body">
+                {{ question_form.as_p }}
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Options</h5>
+                <p class="text-muted">Check the correct answer(s)</p>
+            </div>
+            <div class="card-body">
+                {{ option_formset.management_form }}
+                {% for form in option_formset %}
+                    <div class="form-group row mb-3">
+                        <div class="col-md-8">
+                            {{ form.text }}
+                            {{ form.text.errors }}
+                        </div>
+                        <div class="col-md-4 form-check form-check-inline">
+                            {{ form.is_correct }}
+                            <label class="form-check-label" for="{{ form.is_correct.id_for_label }}">
+                                Correct Answer
+                            </label>
+                            {{ form.is_correct.errors }}
+                        </div>
+                        {{ form.id }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Save Question</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
